@@ -22,92 +22,110 @@
   --bg:#111513; --surface:#1a201d; --ink:#eef2ef; --muted:#a7b3ad; --line:#2d3732;
   --accent:#7fd3a8; --accent-soft:#1d3329; --rec:#c9a6ec; --rec-soft:#2b2236; --on:#111513; --warn:#f2a679 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:19px/1.5 var(--f-body);
-  padding:0 max(16px,env(safe-area-inset-right)) 64px max(16px,env(safe-area-inset-left))}
-main{max-width:600px;margin:max(16px,env(safe-area-inset-top)) auto 0;display:flex;flex-direction:column;gap:18px}
-h1{font:600 2rem/1.15 var(--f-head);margin:0;text-wrap:balance}
-h2{font:600 1.5rem/1.2 var(--f-head);margin:0;text-wrap:balance}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.45 var(--f-body);
+  padding:0 max(16px,env(safe-area-inset-right)) 48px max(16px,env(safe-area-inset-left))}
+main{max-width:600px;margin:16px auto 0;display:flex;flex-direction:column;gap:16px}
+h1{font:600 1.55rem/1.15 var(--f-head);margin:2px 0 0;text-wrap:balance}
 p{margin:0}
-button{font:inherit;color:inherit;cursor:pointer}
-:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:disabled{opacity:.4;cursor:default}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .muted{color:var(--muted)}
-.eyebrow{font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
-.big{display:block;width:100%;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:16px 18px;min-height:64px}
-.big b{display:block;font-size:1.15rem}
-.big span{color:var(--muted);font-size:.95rem}
-.big[aria-current="true"]{border-color:var(--accent);background:var(--accent-soft)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.grid .big{text-align:center;font-weight:700}
-.link{background:none;border:0;padding:8px 0;color:var(--accent);text-decoration:underline;font-weight:700}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.card{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:14px}
-.tabs{display:flex;gap:6px;background:var(--bg);border-radius:14px;padding:5px}
-.tab{flex:1;border:0;background:transparent;border-radius:10px;padding:12px 8px;font-weight:700;color:var(--muted);min-height:52px}
-.tab[aria-selected="true"]{background:var(--c);color:var(--on)}
-.c-part{--c:var(--accent);--cs:var(--accent-soft)} .c-rec{--c:var(--rec);--cs:var(--rec-soft)}
-.clock{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.clock .t{font-size:2.4rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
-.clock .d{color:var(--muted);font-variant-numeric:tabular-nums}
-.now{font-weight:700;color:var(--c)}
-input[type=range]{width:100%;height:36px;accent-color:var(--c)}
-.transport{display:flex;align-items:center;justify-content:center;gap:16px}
-.round{width:60px;height:60px;border-radius:999px;border:2px solid var(--line);background:var(--surface);font-weight:700}
-.play{width:88px;height:88px;border-radius:999px;border:0;background:var(--c);color:var(--on);font-size:2rem}
-.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
-.tool{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:12px;font-weight:700;min-height:56px}
-.tool[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:var(--on)}
-.secs{display:flex;flex-direction:column}
-.sec{display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:left;border:0;border-top:1px solid var(--line);background:none;padding:14px 8px;min-height:56px;width:100%}
-.sec:first-child{border-top:0}
-.sec .tm{font-variant-numeric:tabular-nums;color:var(--c);font-weight:700;flex:none}
-.sec.on{background:var(--cs);border-radius:12px;box-shadow:inset 5px 0 0 var(--c);font-weight:700}
-.sec:disabled{color:var(--muted);cursor:default}
-.sec:disabled .tm{color:var(--muted);font-weight:400;font-size:.9rem}
-.msg{border-left:4px solid var(--warn);padding:8px 12px;background:var(--surface);border-radius:8px}
-select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
-/* Part choice + Full choir / My part */
-.setup{display:flex;flex-direction:column;gap:10px}
-.partsel{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:10px 12px 10px 16px;font-weight:700}
-.partsel select{font-weight:700;min-height:44px;max-width:60%}
-.partsel.ask{border-color:var(--accent);background:var(--accent-soft)}
-.setup .tabs{background:var(--surface);border:2px solid var(--line)}
-.tab:disabled{opacity:.45;cursor:default}
+.eyebrow{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.sub{color:var(--muted);font-size:.95rem}
+.msg{border-left:4px solid var(--warn);padding:8px 12px;background:var(--surface);border-radius:8px;font-size:.95rem}
+.c-part{--c:var(--accent);--cs:var(--accent-soft);--o:var(--rec);--os:var(--rec-soft)}
+.c-rec{--c:var(--rec);--cs:var(--rec-soft);--o:var(--accent);--os:var(--accent-soft)}
+select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;min-height:40px}
+
+/* One switch: Full choir | <your part> ▾ */
+.switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.seg{border:0;border-radius:12px;background:transparent;min-height:50px;padding:8px 10px;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px}
+.seg[aria-pressed="true"]{background:var(--c);color:var(--on)}
+.seg .car{font-size:.8em;opacity:.8}
+.seg.ask{color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+
+/* Bottom sheet for choosing a part */
+dialog.sheet{border:0;padding:0;margin:auto auto 0;width:100%;max-width:600px;border-radius:20px 20px 0 0;background:var(--surface);color:var(--ink)}
+dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
+.sheet .hd{padding:18px 20px 6px;font-weight:700}
+.sheet .opts{display:flex;flex-direction:column;padding:0 8px max(12px,env(safe-area-inset-bottom))}
+.sheet .opt{border:0;background:none;text-align:left;padding:14px 12px;border-radius:12px;font-weight:700;display:flex;justify-content:space-between;min-height:52px}
+.sheet .opt[aria-current="true"]{background:var(--accent-soft);color:var(--accent)}
+
 /* Playlist */
-.pl{list-style:none;margin:0;padding:0;background:var(--surface);border:2px solid var(--line);border-radius:18px;overflow:hidden}
+.pl{list-style:none;margin:0;padding:0}
+.pl>li{border-radius:0}
+.pl>li.cur{border-radius:16px}
 .pl>li+li{border-top:1px solid var(--line)}
-.pr{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:14px 16px;min-height:72px}
-.pr .n{width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font-weight:700;color:var(--muted);border:2px solid var(--line);font-size:.95rem}
+.pl>li.cur{background:var(--cs);border-top-color:transparent}
+.pl>li.cur+li{border-top-color:transparent}
+.pr{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:12px 8px;min-height:68px}
+.pr .n{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;font-weight:700;color:var(--muted);font-size:.95rem}
 .pr .nm{min-width:0}
-.pr .nm b{display:block;font-size:1.1rem}
-.pr .nm span{display:block;color:var(--muted);font-size:.9rem}
-.pr .du{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.95rem}
-.pl li.cur{background:var(--cs)}
-.pl li.cur .n{background:var(--c);border-color:var(--c);color:var(--on)}
+.pr .nm b{display:block;font-size:1.05rem;line-height:1.25}
+.pr .nm span{display:block;color:var(--muted);font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr .du{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.9rem}
+.pl li.cur .n{background:var(--c);color:var(--on)}
 .pl li.cur .nm b{color:var(--c)}
-.open{padding:0 12px 14px;display:flex;flex-direction:column;gap:12px}
-.open .secs{background:var(--surface);border-radius:14px;padding:4px}
-.open .mv select{flex:1}
-.chip{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:700;min-height:44px}
+.prog{height:3px;margin:0 12px;border-radius:3px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--c)}
+
+/* The open piece */
+.open{padding:6px 8px 12px;display:flex;flex-direction:column;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-weight:700;font-size:.9rem;min-height:40px;display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink)}
 .chip[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:var(--on)}
-a.tool{display:flex;align-items:center;justify-content:center;text-decoration:none;color:inherit}
-#offline h2{font-size:1.15rem}
-/* Pinned player: stays at the top while scrolling */
-.bar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:2px solid var(--line);
+.chip select{border:0;padding:0 2px;min-height:0;background:transparent;font-weight:700;font-size:inherit}
+.secs{display:flex;flex-direction:column;background:var(--surface);border-radius:14px;padding:4px}
+.sec{display:grid;grid-template-columns:3.6em 1fr auto;gap:10px;align-items:baseline;text-align:left;border:0;background:none;padding:11px 10px;border-radius:10px;width:100%;min-height:48px}
+.sec+.sec{box-shadow:0 -1px 0 var(--line)}
+.sec .m{font-size:.85rem;color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums}
+.sec .d{min-width:0}
+.sec .tm{font-variant-numeric:tabular-nums;color:var(--c);font-weight:700;font-size:.9rem}
+.sec .pg{font-size:.8rem;color:var(--muted);margin-left:8px;text-decoration:underline}
+.sec.on{background:var(--cs);box-shadow:inset 4px 0 0 var(--c)}
+.sec.on .d,.sec.on .m{font-weight:700;color:var(--ink)}
+.sec:disabled{opacity:1;color:var(--muted)}
+.sec:disabled .tm{color:var(--muted);font-weight:400;font-size:.8rem}
+
+/* Offline: one quiet row */
+.offl{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 8px;border-top:1px solid var(--line);font-size:.95rem}
+.offl button{border:0;background:none;padding:6px 0;font-weight:700;color:var(--accent);text-align:left}
+.offl .x{color:var(--muted);font-weight:400;text-decoration:underline}
+.offl progress{width:100%;height:6px}
+
+/* Pinned player */
+.bar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);
   margin:0 calc(-1 * max(16px,env(safe-area-inset-right))) 0 calc(-1 * max(16px,env(safe-area-inset-left)));
-  padding:max(8px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 6px max(16px,env(safe-area-inset-left))}
-.bar .in{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:8px}
-.bar .what{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0 4px}
-.bar .what b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bar .what>span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-size:.85rem;font-variant-numeric:tabular-nums}
-.bar .secline{max-width:600px;margin:6px auto 0;font-weight:700;color:var(--c);font-size:.95rem;line-height:1.3;min-height:1.3em}
-.bar .play{width:52px;height:52px;font-size:1.2rem;flex:none}
-.bar .sk{width:44px;height:44px;border-radius:999px;border:2px solid var(--line);background:var(--surface);flex:none;font-size:1rem}
-.bar .sw{flex:none;max-width:34%;min-height:44px;border-radius:999px;border:2px solid var(--o);background:var(--os);color:var(--o);font-weight:700;font-size:.85rem;padding:0 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bar .seek{max-width:600px;margin:2px auto 0}
-.bar .seek input{display:block;height:28px}
-.c-part{--o:var(--rec);--os:var(--rec-soft)} .c-rec{--o:var(--accent);--os:var(--accent-soft)}
+  padding:max(8px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 8px max(16px,env(safe-area-inset-left))}
+.bar>div{max-width:600px;margin:0 auto}
+.bar .top{display:flex;align-items:flex-start;gap:10px}
+.bar .what{flex:1;min-width:0;text-align:left;background:none;border:0;padding:2px 0}
+.bar .what:disabled{opacity:1}
+.bar .what b{font-size:1rem;margin-right:6px}
+.bar .badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--c);vertical-align:2px;white-space:nowrap}
+.bar .secl{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:700;color:var(--c);font-size:.92rem;line-height:1.3;margin-top:2px}
+.bar .secl:empty{display:none}
+.bar .sw{flex:none;max-width:42%;min-height:40px;border-radius:999px;border:1px solid var(--o);background:var(--os);color:var(--o);font-weight:700;font-size:.85rem;padding:0 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .seek{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-top:4px;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar .seek input{width:100%;height:28px;margin:0;accent-color:var(--c)}
+.bar .ctl{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:2px}
+.bar .ib{width:44px;height:44px;border-radius:999px;border:0;background:transparent;font-weight:700;font-size:.85rem;flex:none}
+.bar .ib[aria-pressed="true"]{background:var(--c);color:var(--on)}
+.bar .play{width:56px;height:56px;border-radius:999px;border:0;background:var(--c);color:var(--on);font-size:1.3rem;flex:none}
+@media (max-width:360px){.bar .ctl{gap:4px}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+.bar .dl{flex:none;width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:.8rem;color:var(--muted)}
+.bar .dl.done{color:var(--accent);border-color:var(--accent)}
+.sheet .body{padding:4px 20px max(16px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px}
+.sheet progress{width:100%;height:8px}
+.sheet .acts{display:flex;flex-wrap:wrap;gap:8px}
+.sheet .acts .opt{flex:1 1 auto;justify-content:center;border:1px solid var(--line)}
+.sheet .acts .go{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.sheet .acts .quiet{border:0;color:var(--muted);text-decoration:underline;font-weight:400;flex-basis:100%}
 </style>
 </head>
 <body>
@@ -228,7 +246,12 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
     document.querySelectorAll(".sec[data-i]").forEach(b => b.classList.toggle("on", !!s && pc.sections[+b.dataset.i] === s));
     const pb = $("#pitch"); if (pb) { const ps = s && s.pitch ? s : null; pb.hidden = !ps; if (ps) { pb.textContent = "♪ " + ps.pitch; pb.dataset.p = ps.pitch; } }
     const bs = $("#barsec"); if (bs) bs.textContent = s ? s.name : "";
-    const bc = $("#barclk"); if (bc) bc.textContent = fmt(t);
+    const tc = $("#tcur"); if (tc) tc.textContent = fmt(t);
+    const td = $("#tdur"); if (td) td.textContent = audio.duration ? fmt(audio.duration) : "–:––";
+    const pf = $("#progfill"); if (pf) {
+      const files = track(pc, mode), before = files.slice(0, fi).reduce((n, f) => n + (f.dur || 0), 0), all = files.reduce((n, f) => n + (f.dur || 0), 0);
+      pf.style.width = (all ? Math.min(100, (before + t) / all * 100) : (audio.duration ? t / audio.duration * 100 : 0)) + "%";
+    }
     const ms = $("#mscrub"); if (ms && audio.duration && document.activeElement !== ms) { ms.max = audio.duration; ms.value = t; }
   }
   function modeLabel() { const m = modes(piece()).find(x => x.m === mode); return m ? m.label : ""; }
@@ -277,24 +300,36 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
     try { const keys = await (await caches.open(AUDIO)).keys(); saved = new Set(keys.map(k => k.url.split("/").pop())); } catch (e) { saved = new Set(); }
     renderOffline();
   }
+  // The ⬇ button in the pinned bar shows the state; the sheet explains and confirms.
+  function offlineState() {
+    const list = wanted(), missing = list.filter(f => !saved.has(f.id));
+    return { list, missing, have: list.length - missing.length,
+             left: missing.reduce((n, f) => n + (f.size || 0), 0), total: list.reduce((n, f) => n + (f.size || 0), 0) };
+  }
   function renderOffline() {
-    const el = $("#offline"); if (!el) return;
-    const list = wanted(), missing = list.filter(f => !saved.has(f.id)), have = list.length - missing.length;
-    const total = list.reduce((n, f) => n + (f.size || 0), 0), left = missing.reduce((n, f) => n + (f.size || 0), 0);
+    const s = offlineState(), btn = $("#dl");
+    if (btn) {
+      const done = !s.missing.length && s.list.length;
+      btn.textContent = saving ? `${saving.done}/${saving.total}` : done ? "✓" : "⬇";
+      btn.classList.toggle("done", !!done && !saving);
+      btn.setAttribute("aria-label", saving ? `Saving ${saving.done} of ${saving.total} for offline` : done ? "Saved for offline" : "Save for offline");
+    }
+    const sh = $("#offsheet"); if (!sh) return;
     const what = part ? `your ${esc(part)} tracks and the full choir recordings` : "the full choir recordings";
     let body;
     if (saving) {
-      body = `<p><b>Saving ${saving.done + 1} of ${saving.total}…</b></p><p class="muted">Keep this page open until it finishes.</p>
-        <progress max="${saving.total}" value="${saving.done}" style="width:100%;height:14px"></progress>`;
-    } else if (!missing.length) {
-      body = `<p><b>✓ Saved on this phone</b></p><p class="muted">Everything plays without internet now.</p>
-        <button class="link" data-act="unsave">Remove saved tracks from this phone</button>`;
+      body = `<p>Saving ${saving.done + 1} of ${saving.total}… Keep this page open until it finishes.</p>
+        <progress max="${saving.total}" value="${saving.done}"></progress>
+        <div class="acts"><button class="opt" data-act="offclose">Hide</button></div>`;
+    } else if (!s.missing.length && s.list.length) {
+      body = `<p><b>✓ Saved on this phone.</b> Everything plays without internet.</p>
+        <div class="acts"><button class="opt" data-act="offclose">Done</button><button class="opt quiet" data-act="unsave">Remove from this phone</button></div>`;
     } else {
-      body = `<p>Save ${what} on this phone so they play without internet. About <b>${mb(have ? left : total)} MB</b>${have ? ` left (${have} of ${list.length} already saved)` : ""}. Best on Wi-Fi at home.</p>
-        <button class="big" data-act="save" style="text-align:center"><b>${have ? "Finish saving" : "Save for offline"}</b></button>
-        ${have ? `<button class="link" data-act="unsave">Remove saved tracks from this phone</button>` : ""}`;
+      body = `<p>Save ${what} on this phone so they play without internet: about <b>${mb(s.have ? s.left : s.total)} MB</b>${s.have ? ` left (${s.have} of ${s.list.length} saved)` : ""}. Best on Wi-Fi.</p>
+        <div class="acts"><button class="opt go" data-act="save">${s.have ? "Finish saving" : "Save"}</button><button class="opt" data-act="offclose">Not now</button>
+        ${s.have ? `<button class="opt quiet" data-act="unsave">Remove saved tracks</button>` : ""}</div>`;
     }
-    el.innerHTML = `<h2>Practice without internet</h2>${body}${saveMsg ? `<p class="msg">${esc(saveMsg)}</p>` : ""}`;
+    sh.querySelector(".body").innerHTML = body + (saveMsg ? `<p class="msg">${esc(saveMsg)}</p>` : "");
   }
   async function saveAll() {
     if (saving) return;
@@ -326,21 +361,23 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
   }
   /* ----- the playlist: one screen ----- */
   const totalDur = (pc, m) => m === "rec" ? (pc.recording && pc.recording.dur) : track(pc, m).reduce((n, f) => n + (f.dur || 0), 0);
+  // "m. 21 · Tongue clicks" -> ["m. 21", "Tongue clicks"]; anything else stays whole.
+  function splitName(n) { const i = String(n).indexOf(" · "); return i > 0 && i <= 12 ? [n.slice(0, i), n.slice(i + 3)] : ["", n]; }
   function render() {
-    const hasPart = !!part;
-    $("#app").innerHTML = `<header><p class="eyebrow">${esc(P.org)}</p><h1>${esc(P.title)}</h1>${P.sub ? `<p class="muted">${esc(P.sub)}</p>` : ""}</header>
-      <section class="setup" aria-label="What to play">
-        <label class="partsel${hasPart ? "" : " ask"}"><span>${hasPart ? "Your part" : "Start here: choose your part"}</span>
-          <select id="partSel">${hasPart ? "" : `<option value="" selected disabled>Choose…</option>`}${P.parts.map(x => `<option ${x === part ? "selected" : ""}>${esc(x)}</option>`).join("")}</select></label>
-        <div class="tabs" role="tablist" aria-label="Play">
-          <button class="tab c-rec" role="tab" data-mode="rec" aria-selected="${mode === "rec"}">Full choir</button>
-          <button class="tab c-part" role="tab" data-mode="part" aria-selected="${mode !== "rec"}" ${hasPart ? "" : "disabled"}>${esc(hasPart ? part : "My part")}</button>
-        </div>
-      </section>
+    const hasPart = !!part, partOn = mode !== "rec";
+    $("#app").innerHTML = `<header><p class="eyebrow">${esc(P.org)}</p><h1>${esc(P.title)}</h1>${P.sub ? `<p class="sub">${esc(P.sub)}</p>` : ""}</header>
+      <div class="switch" role="group" aria-label="What to play">
+        <button class="seg c-rec" data-act="seg-rec" aria-pressed="${!partOn}">Full choir</button>
+        <button class="seg c-part${hasPart ? "" : " ask"}" data-act="seg-part" aria-pressed="${partOn && hasPart}" aria-haspopup="dialog">${esc(hasPart ? part : "My part")} <span class="car" aria-hidden="true">▾</span></button>
+      </div>
       <ol class="pl" id="pl" aria-label="Pieces"></ol>
-      ${canSave ? `<section class="card" id="offline" aria-label="Save for offline"></section>` : ""}`;
+      <dialog class="sheet" id="offsheet" aria-label="Save for offline"><p class="hd">Practice without internet</p><div class="body"></div></dialog>
+      <dialog class="sheet" id="sheet" aria-label="Choose your part"><p class="hd">Which part do you sing?</p>
+        <div class="opts">${P.parts.map(x => `<button class="opt" data-part="${esc(x)}" aria-current="${x === part}">${esc(x)}${x === part ? " <span>✓</span>" : ""}</button>`).join("")}</div></dialog>`;
+    document.querySelectorAll("dialog.sheet").forEach(sh => sh.addEventListener("click", e => { if (e.target === sh) sh.close(); }));
     renderList(); renderOffline(); renderBar();
   }
+  function openSheet() { const sh = $("#sheet"); if (sh && sh.showModal) sh.showModal(); }
   function renderList() {
     const el = $("#pl"); if (!el) return;
     el.className = "pl " + (mode === "rec" ? "c-rec" : "c-part");
@@ -354,36 +391,32 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
           <span class="nm"><b>${esc(pc.name)}</b><span>${esc(pc.composer || "")}</span></span>
           <span class="du">${d ? fmt(d) : ""}</span>
         </button>
-        ${cur ? `<div class="open" id="open"></div>` : ""}</li>`;
+        ${cur ? `<div class="prog" aria-hidden="true"><i id="progfill"></i></div><div class="open" id="open"></div>` : ""}</li>`;
     }).join("");
     renderPlayer();
   }
-  // The open piece: its sections and practice tools.
+  // The open piece: a row of small choices, then its sections.
   function renderPlayer() {
     const el = $("#open"); if (!el || pi < 0) return;
-    const pc = piece(), files = track(pc, mode);
-    const alt = altOf(pc), t2 = alt && mode !== "rec";
-    el.innerHTML = `
-      ${t2 ? `<div class="row"><button class="chip" data-mode="part" aria-pressed="${mode === "part"}">${esc(mainVoice(pc))}</button><button class="chip" data-mode="part2" aria-pressed="${mode === "part2"}">${esc(alt.label)}</button></div>` : ""}
-      ${pc.movements && files.length > 1 ? `<label class="row mv">Movement <select id="mvt" aria-label="Movement">${files.map((f, i) => `<option value="${i}" ${i === fi ? "selected" : ""}>${esc(pc.movements[f.mvt] || "Movement " + (i + 1))}</option>`).join("")}</select></label>` : ""}
-      <div class="secs" id="secs"></div>
-      <div class="tools">
-        <button class="tool" data-act="back" aria-label="Back 10 seconds">−10 s</button>
-        <button class="tool" data-act="fwd" aria-label="Forward 10 seconds">+10 s</button>
-        <button class="tool" data-act="loop" aria-pressed="${!!loop}">⟲ ${loop ? "Repeating" : "Repeat section"}</button>
-        <button class="tool" id="pitch" data-act="pitch" hidden></button>
-        <label class="tool row" style="justify-content:center;gap:6px">Speed <select id="speed" aria-label="Speed">${[0.75, 0.85, 1, 1.1].map(v => `<option value="${v}" ${v === speed ? "selected" : ""}>${v === 1 ? "Normal" : v + "×"}</option>`).join("")}</select></label>
-        ${pc.score ? `<a class="tool" target="_blank" rel="noopener" href="https://drive.google.com/file/d/${esc(pc.score.id)}/view">Score ↗</a>` : ""}
+    const pc = piece(), files = track(pc, mode), alt = altOf(pc), two = alt && mode !== "rec";
+    el.innerHTML = `<div class="chips">
+        ${two ? `<button class="chip" data-mode="part" aria-pressed="${mode === "part"}">${esc(mainVoice(pc))}</button><button class="chip" data-mode="part2" aria-pressed="${mode === "part2"}">${esc(alt.label)}</button>` : ""}
+        ${pc.movements && files.length > 1 ? `<label class="chip">Movement <select id="mvt" aria-label="Movement">${files.map((f, i) => `<option value="${i}" ${i === fi ? "selected" : ""}>${esc(pc.movements[f.mvt] || "Movement " + (i + 1))}</option>`).join("")}</select></label>` : ""}
+        <button class="chip" id="pitch" data-act="pitch" hidden></button>
+        <label class="chip">Speed <select id="speed" aria-label="Speed">${[0.75, 0.85, 1, 1.1].map(v => `<option value="${v}" ${v === speed ? "selected" : ""}>${v === 1 ? "Normal" : v + "×"}</option>`).join("")}</select></label>
+        ${pc.score ? `<a class="chip" target="_blank" rel="noopener" href="https://drive.google.com/file/d/${esc(pc.score.id)}/view">Score ↗</a>` : ""}
       </div>
+      <div class="secs" id="secs"></div>
       ${err ? `<p class="msg">${esc(err)}</p>` : ""}`;
     renderSecs();
   }
   function renderSecs() {
     const el = $("#secs"); if (!el) return;
     const pc = piece();
-    el.innerHTML = pc.sections.map((s, i) => { const st = startOf(pc, s, mode);
-      return `<button class="sec" data-i="${i}" ${st ? "" : "disabled"}><span>${esc(s.name)}</span><span class="tm">${st ? fmt(st.t) : "not set yet"}</span></button>`; }).join("")
-      || `<p class="muted">No sections yet.</p>`;
+    el.innerHTML = pc.sections.map((s, i) => {
+      const st = startOf(pc, s, mode), [m, d] = splitName(s.name);
+      return `<button class="sec" data-i="${i}" ${st ? "" : "disabled"}><span class="m">${esc(m)}</span><span class="d">${esc(d)}</span><span class="tm">${st ? fmt(st.t) : "not set"}</span></button>`;
+    }).join("") || `<p class="muted" style="padding:10px">No sections yet.</p>`;
     tick();
   }
   // The other track the ⇄ button switches to.
@@ -391,30 +424,28 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
   function renderBar() {
     const b = $("#bar");
     if (!P) { b.hidden = true; return; }
-    if (pi < 0) {
-      // Nothing chosen yet: the bar still sits at the top; ▶ starts the first piece.
-      b.hidden = false; b.className = "bar " + (mode === "rec" ? "c-rec" : "c-part");
-      b.innerHTML = `<div class="in">
-          <button class="sk" disabled aria-label="Previous">⏮</button>
-          <button class="play" data-act="first" aria-label="Play ${esc(P.pieces[0] ? P.pieces[0].name : "")}">▶</button>
-          <button class="sk" disabled aria-label="Next piece">⏭</button>
-          <span class="what"><b>Pick a piece</b><span>${esc(mode === "rec" ? "Full choir" : (part || ""))}</span></span>
-        </div>
-        <p class="secline" id="barsec"></p>
-        <div class="seek"><input type="range" id="mscrub" min="0" max="1" value="0" disabled aria-label="Position in the track"></div>`;
-      return;
-    }
-    const o = otherMode();
     b.hidden = false; b.className = "bar " + (mode === "rec" ? "c-rec" : "c-part");
-    b.innerHTML = `<div class="in">
-        <button class="sk" data-act="prev" aria-label="Restart, or tap twice for the previous piece">⏮</button>
-        <button class="play" data-act="play" aria-label="${audio.paused ? "Play" : "Pause"}">${audio.paused ? "▶" : "❚❚"}</button>
-        <button class="sk" data-act="next" aria-label="Next piece" ${pi >= P.pieces.length - 1 ? "disabled" : ""}>⏭</button>
-        <button class="what" data-act="goto" aria-label="Show ${esc(piece().name)}"><b>${esc(piece().name)}</b><span>${esc(modeLabel())} · <span id="barclk">${fmt(audio.currentTime)}</span></span></button>
-        ${o ? `<button class="sw" data-mode="${o.m}" aria-label="Switch to ${esc(o.label)}">⇄ ${esc(o.label)}</button>` : ""}
-      </div>
-      <p class="secline" id="barsec"></p>
-      <div class="seek"><input type="range" id="mscrub" min="0" max="${audio.duration || 1}" step="0.5" value="${audio.currentTime || 0}" aria-label="Position in the track"></div>`;
+    const idle = pi < 0, o = idle ? null : otherMode(), playing = !idle && !audio.paused;
+    const label = idle ? (mode === "rec" ? "Full choir" : part || "") : modeLabel();
+    b.innerHTML = `<div>
+        <div class="top">
+          <button class="what" data-act="goto" ${idle ? "disabled" : ""} aria-label="${idle ? "Nothing playing" : "Show " + esc(piece().name)}"><b>${esc(idle ? "Pick a piece" : piece().name)}</b><span class="badge">${esc(label)}</span>
+            <span class="secl" id="barsec"></span></button>
+          ${canSave ? `<button class="dl" id="dl" data-act="dl" aria-label="Save for offline">⬇</button>` : ""}
+          ${o ? `<button class="sw" data-mode="${o.m}" aria-label="Switch to ${esc(o.label)}">⇄ ${esc(o.label)}</button>` : ""}
+        </div>
+        <div class="seek"><span id="tcur">${fmt(idle ? 0 : audio.currentTime)}</span>
+          <input type="range" id="mscrub" min="0" max="${audio.duration || 1}" step="0.5" value="${idle ? 0 : audio.currentTime || 0}" aria-label="Position in the track" ${idle ? "disabled" : ""}>
+          <span id="tdur">${idle || !audio.duration ? "–:––" : fmt(audio.duration)}</span></div>
+        <div class="ctl">
+          <button class="ib" data-act="loop" aria-pressed="${!!loop}" aria-label="${loop ? "Stop repeating" : "Repeat this section"}" ${idle ? "disabled" : ""}>⟲</button>
+          <button class="ib" data-act="back" aria-label="Back 10 seconds" ${idle ? "disabled" : ""}>−10</button>
+          <button class="ib" data-act="prev" aria-label="Restart, or tap twice for the previous piece" ${idle ? "disabled" : ""}>⏮</button>
+          <button class="play" data-act="${idle ? "first" : "play"}" aria-label="${playing ? "Pause" : "Play"}">${playing ? "❚❚" : "▶"}</button>
+          <button class="ib" data-act="next" aria-label="Next piece" ${idle || pi >= P.pieces.length - 1 ? "disabled" : ""}>⏭</button>
+          <button class="ib" data-act="fwd" aria-label="Forward 10 seconds" ${idle ? "disabled" : ""}>+10</button>
+        </div></div>`;
+    renderOffline(); tick();
   }
   // Which kind of track to use for piece pc, given what the singer has chosen.
   function modeFor(pc, want) {
@@ -433,7 +464,7 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
   function chooseMode(m) {
     if (pi < 0) { mode = m; render(); return; }
     setMode(modeFor(piece(), m));
-    $("#app .tabs") && document.querySelectorAll("#app .tabs .tab").forEach(t => t.setAttribute("aria-selected", String((t.dataset.mode === "rec") === (mode === "rec"))));
+    document.querySelectorAll(".switch .seg").forEach(s => s.setAttribute("aria-pressed", String((s.dataset.act === "seg-rec") === (mode === "rec"))));
     renderList(); renderBar();
   }
   function choosePart(p) {
@@ -441,11 +472,11 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
     if (pi >= 0) {
       const was = !audio.paused, s = sectionAt(piece(), mode, fi, audio.currentTime || 0);
       audio.pause(); audio.dataset.id = ""; loop = null;
-      mode = modeFor(piece(), mode === "rec" ? "rec" : "part");
+      mode = modeFor(piece(), "part");
       render();
       const st = s && startOf(piece(), s, mode);
       load(st ? st.f : 0, st ? st.t : 0, was);
-    } else render();
+    } else { mode = "part"; render(); }
   }
   // ⏮: one tap restarts the track (or movement); a second tap within 1.5 s, or a tap in the first 3 s, goes to the previous piece.
   let lastPrev = 0;
@@ -466,10 +497,15 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
       else openPiece(n, true);
       return;
     }
+    if (b.dataset.part != null && b.classList.contains("opt")) { const sh = $("#sheet"); if (sh && sh.open) sh.close(); choosePart(b.dataset.part); return; }
     if (b.dataset.mode) { chooseMode(b.dataset.mode); return; }
     if (b.dataset.i != null) { jump(piece().sections[+b.dataset.i]); return; }
     switch (b.dataset.act) {
       case "first": openPiece(0, true); break;
+      case "seg-rec": chooseMode("rec"); break;
+      case "seg-part": if (!part || mode !== "rec") openSheet(); else chooseMode("part"); break;
+      case "dl": { renderOffline(); const sh = $("#offsheet"); if (sh && sh.showModal) sh.showModal(); break; }
+      case "offclose": { const sh = $("#offsheet"); if (sh && sh.open) sh.close(); break; }
       case "prev": prevPress(); break;
       case "next": nextPress(); break;
       case "goto": { const o = $("#open"); if (o) o.closest("li").scrollIntoView({ behavior: "smooth", block: "start" }); break; }
@@ -482,7 +518,7 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
       case "loop": {
         if (loop) loop = null;
         else { const s = sectionAt(piece(), mode, fi, audio.currentTime || 0); if (s) loop = { sec: s, ...sectionEnd(piece(), mode, s) }; }
-        renderPlayer(); break;
+        renderBar(); break;
       }
     }
   });
