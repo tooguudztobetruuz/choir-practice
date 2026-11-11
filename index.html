@@ -165,7 +165,11 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   };
   let saved = new Set(), saving = null, saveMsg = "";
 
-  let P = null, part = store.get("ncc-part") || null, pi = -1, mode = "part", fi = 0, loop = null, speed = 1, err = "";
+  let P = null, part = store.get("ncc-part") || null, pi = -1, mode = "part", fi = 0, loop = null, err = "";
+  // Speed belongs to one piece and one kind of track (full choir, or your part), remembered on this phone.
+  let speeds = {}; try { speeds = JSON.parse(store.get("ncc-speed") || "{}") || {}; } catch (e) {}
+  const speedKey = () => P && pi >= 0 ? `${P.pieces[pi].name}|${mode === "rec" ? "rec" : "part"}` : "";
+  const speedNow = () => speeds[speedKey()] || 1;
   // Where ▶ starts when the open piece's track isn't loaded yet (0, or the spot remembered from last time).
   let resumeAt = 0;
   const loaded = () => !!audio.dataset.id;
@@ -217,7 +221,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     const id = files[f].id;
     fi = f; err = "";
     if (audio.dataset.id !== id) { audio.dataset.id = id; audio.src = src(id); }
-    audio.playbackRate = speed;
+    audio.playbackRate = speedNow();
     const go = () => { if (at != null) audio.currentTime = at; if (play) audio.play().catch(() => {}); };
     if (audio.readyState >= 1) go(); else audio.addEventListener("loadedmetadata", go, { once: true });
     renderPlayer(); renderBar();
@@ -439,7 +443,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
         ${two ? `<button class="chip" data-mode="part" aria-pressed="${mode === "part"}">${esc(mainVoice(pc))}</button><button class="chip" data-mode="part2" aria-pressed="${mode === "part2"}">${esc(alt.label)}</button>` : ""}
         ${pc.movements && files.length > 1 ? `<label class="chip">Movement <select id="mvt" aria-label="Movement">${files.map((f, i) => `<option value="${i}" ${i === fi ? "selected" : ""}>${esc(pc.movements[f.mvt] || "Movement " + (i + 1))}</option>`).join("")}</select></label>` : ""}
         <button class="chip" id="pitch" data-act="pitch" hidden></button>
-        <label class="chip">Speed <select id="speed" aria-label="Speed">${[0.75, 0.85, 1, 1.1].map(v => `<option value="${v}" ${v === speed ? "selected" : ""}>${v}×</option>`).join("")}</select></label>
+        <label class="chip">Speed <select id="speed" aria-label="Speed">${[0.75, 0.85, 1, 1.1].map(v => `<option value="${v}" ${v === speedNow() ? "selected" : ""}>${v}×</option>`).join("")}</select></label>
         ${pc.score ? `<a class="chip" target="_blank" rel="noopener" href="https://drive.google.com/file/d/${esc(pc.score.id)}/view">Score ↗</a>` : ""}
       </div>
       <div class="secs" id="secs"></div>
@@ -571,7 +575,12 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   document.addEventListener("input", e => { if (e.target.id === "mscrub") { audio.currentTime = +e.target.value; tick(); } });
   document.addEventListener("change", e => {
     if (e.target.id === "partSel") { choosePart(e.target.value); return; }
-    if (e.target.id === "speed") { speed = +e.target.value; audio.playbackRate = speed; }
+    if (e.target.id === "speed") {
+      const v = +e.target.value, k = speedKey();
+      if (v === 1) delete speeds[k]; else speeds[k] = v;
+      store.set("ncc-speed", JSON.stringify(speeds));
+      audio.playbackRate = v;
+    }
     if (e.target.id === "mvt") { loop = null; load(+e.target.value, 0, !audio.paused); }
   });
 
