@@ -39,6 +39,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 button:disabled{opacity:.4;cursor:default}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .muted{color:var(--muted)}
+.hint{color:var(--muted);font-size:.95rem;margin:-4px 0 -6px}
 .eyebrow{font-size:.85rem;color:var(--muted);font-weight:400}
 .sub{color:var(--muted);font-size:.95rem}
 .msg{border-left:4px solid var(--warn);padding:8px 12px;background:var(--surface);border-radius:8px;font-size:.95rem}
@@ -424,6 +425,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   function render() {
     const hasPart = !!part, partOn = mode !== "rec";
     $("#app").innerHTML = `<header><p class="eyebrow">${esc(P.org)}</p><h1>${esc(P.title)}</h1>${P.sub ? `<p class="sub">${esc(P.sub)}</p>` : ""}</header>
+      ${hasPart ? "" : `<p class="hint">Choose your part, then tap ▶ or a section.</p>`}
       <div class="switch" role="group" aria-label="What to play">
         <button class="seg c-rec" data-act="seg-rec" aria-pressed="${!partOn}">Full choir</button>
         <button class="seg c-part${hasPart ? "" : " ask"}" data-act="seg-part" aria-pressed="${partOn && hasPart}" aria-haspopup="dialog">${esc(hasPart ? part : "My part")} <svg class="car" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -491,7 +493,8 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
           <button class="what" data-act="goto" ${idle ? "disabled" : ""} aria-label="${idle ? "Nothing playing" : "Show " + esc(piece().name)}"><b>${esc(idle ? "Pick a piece" : piece().name)}</b>
             <span class="secl"><span class="trk">${esc(label)}</span><span id="barsec"></span></span></button>
           ${canSave ? `<button class="dl" id="dl" data-act="dl" aria-label="Save for offline">${ICON.dl}</button>` : ""}
-          ${o ? `<button class="sw" data-mode="${o.m}" aria-label="Switch to ${esc(o.label)}">⇄ ${esc(o.label)}</button>` : ""}
+          ${!part ? `<button class="sw" data-act="seg-part" aria-haspopup="dialog">Choose my part</button>`
+            : o ? `<button class="sw" data-mode="${o.m}" aria-label="Switch to ${esc(o.label)}">⇄ ${esc(o.label)}</button>` : ""}
         </div>
         <div class="seek"><span id="tcur">${fmt(idle ? 0 : nowT())}</span>
           <input type="range" id="mscrub" min="0" max="${durNow() || 1}" step="0.5" value="${idle ? 0 : nowT()}" aria-label="Position in the track" ${idle || !loaded() ? "disabled" : ""}>
