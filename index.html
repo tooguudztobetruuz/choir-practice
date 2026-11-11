@@ -74,6 +74,8 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
 .pr .nm span{display:block;color:var(--muted);font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pr .du{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.9rem}
 .pl li.cur .n{background:var(--c);color:var(--on)}
+@media (prefers-reduced-motion: no-preference){ .eq rect{animation:eq 1.1s ease-in-out infinite;transform-origin:50% 100%;transform-box:fill-box} .eq rect:nth-child(2){animation-delay:-.4s} .eq rect:nth-child(3){animation-delay:-.7s} }
+@keyframes eq{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.45)}}
 .pl li.cur .nm b{color:var(--c)}
 .prog{height:3px;margin:0 12px;border-radius:3px;background:var(--line);overflow:hidden}
 .prog i{display:block;height:100%;width:0;background:var(--c)}
@@ -121,13 +123,15 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
 .bar .sw{flex:none;max-width:42%;min-height:40px;border-radius:999px;border:1px solid var(--o);background:var(--os);color:var(--o);font-weight:700;font-size:.85rem;padding:0 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bar .seek{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-top:4px;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .bar .seek input{width:100%;height:28px;margin:0;accent-color:var(--c)}
-.bar .ctl{display:flex;align-items:center;justify-content:center;gap:3px;margin-top:2px}
-.bar .ib{width:53px;min-height:52px;border-radius:14px;border:0;background:transparent;font-weight:700;font-size:1.15rem;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 0;line-height:1}
-.bar .ib small{font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.01em;line-height:1.15;text-align:center}
-.bar .ib[aria-pressed="true"]{background:var(--c);color:var(--on)}
-.bar .ib[aria-pressed="true"] small{color:var(--on)}
+.bar .ctl{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:2px}
+.bar .ib{width:48px;height:48px;border-radius:999px;border:0;background:transparent;font-weight:700;font-size:1.2rem;flex:none;display:grid;place-items:center;padding:0;line-height:1}
+.bar .repl{display:flex;justify-content:center;margin-top:6px}
+.bar .reppill{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;background:var(--c);color:var(--on);font-size:.88rem;padding:6px 14px;min-height:38px;max-width:100%}
+.bar .reppill svg{width:18px;height:18px;flex:none}
+.bar .reppill span:first-of-type{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .reppill .x{font-weight:700;opacity:.85}
 .bar .play{width:56px;height:56px;border-radius:999px;border:0;background:var(--c);color:var(--on);font-size:1.3rem;flex:none}
-@media (max-width:370px){.bar .ctl{gap:0}.bar .ib{width:48px}.bar .play{width:52px;height:52px}}
+@media (max-width:370px){.bar .ctl{gap:6px}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 .bar .dl{flex:none;width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:.8rem;color:var(--muted)}
 .bar .dl.done{color:var(--accent);border-color:var(--accent)}
@@ -161,6 +165,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     dl: `<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto"><path d="M12 3.5v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>`,
     back: `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5a7.5 7.5 0 1 1-7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14.5 2 12 4.5 14.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="12" y="15.6" text-anchor="middle" font-size="9" font-weight="700" fill="currentColor" font-family="system-ui,sans-serif">${BACK}</text></svg>`,
     fwd: `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5a7.5 7.5 0 1 0 7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9.5 2 12 4.5 9.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="12" y="15.6" text-anchor="middle" font-size="9" font-weight="700" fill="currentColor" font-family="system-ui,sans-serif">${BACK}</text></svg>`,
+    bars: `<svg class="eq" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><rect x="1.5" y="6" width="3" height="9" rx="1"/><rect x="6.5" y="2" width="3" height="13" rx="1"/><rect x="11.5" y="8" width="3" height="7" rx="1"/></svg>`,
     repeat: `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></svg>`,
   };
   let saved = new Set(), saving = null, saveMsg = "";
@@ -262,13 +267,12 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     if (loop && fi === loop.f) { audio.currentTime = loop.a; audio.play().catch(() => {}); return; }
     const files = track(piece(), mode);
     if (fi < files.length - 1) load(fi + 1, 0, true);
-    else if (pi < P.pieces.length - 1) openPiece(pi + 1, true);   // like an album: on to the next piece
-    else { openPiece(0, false); }                                  // end of the program: back to the top, ready
+    else openPiece((pi + 1) % P.pieces.length, true);   // like an album on repeat: next piece, and after the last, the first
   });
   ["play", "pause"].forEach(e => audio.addEventListener(e, () => { renderPlayButtons(); renderBar(); media(); savePlace(); }));
   window.addEventListener("pagehide", savePlace);
   // Update the ▶/❚❚ markers in the list without rebuilding it.
-  function renderPlayButtons() { document.querySelectorAll(".pr").forEach(b => { const i = +b.dataset.piece, cur = i === pi, playing = cur && !audio.paused; b.querySelector(".n").textContent = playing ? "❚❚" : cur ? "▶" : i + 1; b.setAttribute("aria-label", (cur ? "" : "Open ") + P.pieces[i].name + (playing ? ", playing" : cur ? ", open" : "")); }); }
+  function renderPlayButtons() { document.querySelectorAll(".pr").forEach(b => { const i = +b.dataset.piece, cur = i === pi, playing = cur && !audio.paused; b.querySelector(".n").innerHTML = playing ? ICON.bars : i + 1; b.setAttribute("aria-label", (cur ? "" : "Open ") + P.pieces[i].name + (playing ? ", playing" : cur ? ", open" : "")); }); }
   audio.addEventListener("loadedmetadata", tick);
   audio.addEventListener("error", () => {
     if (!audio.dataset.id) return;
@@ -402,7 +406,17 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   /* ----- the playlist: one screen ----- */
   const totalDur = (pc, m) => m === "rec" ? (pc.recording && pc.recording.dur) : track(pc, m).reduce((n, f) => n + (f.dur || 0), 0);
   // "m. 21 · Tongue clicks" -> ["m. 21", "Tongue clicks"]; anything else stays whole.
-  function splitName(n) { const i = String(n).indexOf(" · "); return i > 0 && i <= 12 ? [n.slice(0, i), n.slice(i + 3)] : ["", n]; }
+  // Section names -> [left column, words]: the measure ("m. 36") always goes left, so singers can scan the numbers.
+  // "I · Slower, rubato · m. 36" -> ["m. 36", "I · Slower, rubato"]; "B · Sweet is…" -> ["B", "Sweet is…"].
+  function splitName(n) {
+    n = String(n);
+    const m = n.match(/\bm\.\s*\d+/);
+    if (m) {
+      const rest = n.replace(m[0], "").split("·").map(x => x.trim()).filter(Boolean).join(" · ");
+      return [m[0], rest];
+    }
+    const i = n.indexOf(" · "); return i > 0 && i <= 4 ? [n.slice(0, i), n.slice(i + 3)] : ["", n];
+  }
   function render() {
     const hasPart = !!part, partOn = mode !== "rec";
     $("#app").innerHTML = `<header><p class="eyebrow">${esc(P.org)}</p><h1>${esc(P.title)}</h1>${P.sub ? `<p class="sub">${esc(P.sub)}</p>` : ""}</header>
@@ -427,11 +441,11 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
       const d = totalDur(pc, m === "rec" && !pc.recording ? "part" : m);
       return `<li class="${cur ? "cur" : ""}">
         <button class="pr" data-piece="${i}" aria-current="${cur}" aria-label="${cur ? "" : "Open "}${esc(pc.name)}${playing ? ", playing" : cur ? ", open" : ""}">
-          <span class="n" aria-hidden="true">${playing ? "❚❚" : cur ? "▶" : i + 1}</span>
+          <span class="n" aria-hidden="true">${playing ? ICON.bars : i + 1}</span>
           <span class="nm"><b>${esc(pc.name)}</b><span>${esc(pc.composer || "")}</span></span>
           <span class="du">${d ? fmt(d) : ""}</span>
         </button>
-        ${cur ? `<div class="prog" aria-hidden="true"><i id="progfill"></i></div><div class="open" id="open"></div>` : ""}</li>`;
+        ${cur ? `<div class="open" id="open"></div>` : ""}</li>`;
     }).join("");
     renderPlayer();
   }
@@ -479,13 +493,14 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
           <input type="range" id="mscrub" min="0" max="${loaded() && audio.duration ? audio.duration : 1}" step="0.5" value="${idle || !loaded() ? 0 : audio.currentTime || 0}" aria-label="Position in the track" ${idle || !loaded() ? "disabled" : ""}>
           <span id="tdur">${idle || !loaded() || !audio.duration ? "–:––" : fmt(audio.duration)}</span></div>
         <div class="ctl">
-          <button class="ib" data-act="prev" aria-label="Restart, or tap twice for the previous piece" ${idle ? "disabled" : ""}>⏮<small>Restart</small></button>
-          <button class="ib" data-act="back" aria-label="Back ${BACK} seconds" ${idle ? "disabled" : ""}>${ICON.back}<small>Back ${BACK}</small></button>
+          <button class="ib" data-act="prev" aria-label="Restart, or tap twice for the previous piece" ${idle ? "disabled" : ""}>⏮</button>
+          <button class="ib" data-act="back" aria-label="Back ${BACK} seconds" ${idle ? "disabled" : ""}>${ICON.back}</button>
           <button class="play" data-act="${idle ? "first" : "play"}" aria-label="${playing ? "Pause" : "Play"}">${playing ? "❚❚" : "▶"}</button>
-          <button class="ib" data-act="fwd" aria-label="Forward ${BACK} seconds" ${idle ? "disabled" : ""}>${ICON.fwd}<small>Fwd ${BACK}</small></button>
-          <button class="ib" data-act="next" aria-label="Next piece" ${idle || pi >= P.pieces.length - 1 ? "disabled" : ""}>⏭<small>Next</small></button>
-          <button class="ib" data-act="loop" aria-pressed="${!!loop}" aria-label="${loop ? "Stop repeating this section" : "Repeat this section"}" ${idle ? "disabled" : ""}>${ICON.repeat}<small>${loop ? "Repeating" : "Repeat"}<br>section</small></button>
-        </div></div>`;
+          <button class="ib" data-act="fwd" aria-label="Forward ${BACK} seconds" ${idle ? "disabled" : ""}>${ICON.fwd}</button>
+          <button class="ib" data-act="next" aria-label="Next piece" ${idle || P.pieces.length < 2 ? "disabled" : ""}>⏭</button>
+        </div>
+        ${loop && !idle ? `<div class="repl"><button class="reppill" data-act="loop" aria-label="Stop repeating ${esc(loop.sec.name)}">${ICON.repeat}<span>Repeating <b>${esc(splitName(loop.sec.name)[0] || loop.sec.name)}</b></span><span class="x" aria-hidden="true">✕</span></button></div>` : ""}
+      </div>`;
     renderOffline(); tick();
   }
   // Which kind of track to use for piece pc, given what the singer has chosen.
@@ -526,9 +541,10 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     const now = Date.now(), quick = now - lastPrev < 1500; lastPrev = now;
     if (!quick && nowT() > 3) { if (loaded()) audio.currentTime = 0; else resumeAt = 0; tick(); return; }
     lastPrev = 0;
-    if (pi > 0) openPiece(pi - 1, loaded() && !audio.paused); else { if (loaded()) audio.currentTime = 0; else resumeAt = 0; tick(); }
+    // The program loops: before the first piece comes the last one.
+    openPiece((pi - 1 + P.pieces.length) % P.pieces.length, loaded() && !audio.paused);
   }
-  function nextPress() { if (pi < P.pieces.length - 1) openPiece(pi + 1, loaded() && !audio.paused); }
+  function nextPress() { openPiece((pi + 1) % P.pieces.length, loaded() && !audio.paused); }   // after the last piece, the first
 
   /* ----- events ----- */
   document.addEventListener("click", e => {
