@@ -121,13 +121,13 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
 .bar .sw{flex:none;max-width:42%;min-height:40px;border-radius:999px;border:1px solid var(--o);background:var(--os);color:var(--o);font-weight:700;font-size:.85rem;padding:0 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bar .seek{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-top:4px;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .bar .seek input{width:100%;height:28px;margin:0;accent-color:var(--c)}
-.bar .ctl{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:2px}
-.bar .ib{width:60px;min-height:52px;border-radius:14px;border:0;background:transparent;font-weight:700;font-size:1.15rem;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 0;line-height:1}
-.bar .ib small{font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.01em}
+.bar .ctl{display:flex;align-items:center;justify-content:center;gap:3px;margin-top:2px}
+.bar .ib{width:53px;min-height:52px;border-radius:14px;border:0;background:transparent;font-weight:700;font-size:1.15rem;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 0;line-height:1}
+.bar .ib small{font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.01em;line-height:1.15;text-align:center}
 .bar .ib[aria-pressed="true"]{background:var(--c);color:var(--on)}
 .bar .ib[aria-pressed="true"] small{color:var(--on)}
 .bar .play{width:56px;height:56px;border-radius:999px;border:0;background:var(--c);color:var(--on);font-size:1.3rem;flex:none}
-@media (max-width:360px){.bar .ctl{gap:0}.bar .ib{width:54px}}
+@media (max-width:370px){.bar .ctl{gap:0}.bar .ib{width:48px}.bar .play{width:52px;height:52px}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 .bar .dl{flex:none;width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:.8rem;color:var(--muted)}
 .bar .dl.done{color:var(--accent);border-color:var(--accent)}
@@ -160,11 +160,16 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   const ICON = {
     dl: `<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto"><path d="M12 3.5v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>`,
     back: `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5a7.5 7.5 0 1 1-7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14.5 2 12 4.5 14.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="12" y="15.6" text-anchor="middle" font-size="9" font-weight="700" fill="currentColor" font-family="system-ui,sans-serif">${BACK}</text></svg>`,
+    fwd: `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5a7.5 7.5 0 1 0 7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9.5 2 12 4.5 9.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="12" y="15.6" text-anchor="middle" font-size="9" font-weight="700" fill="currentColor" font-family="system-ui,sans-serif">${BACK}</text></svg>`,
     repeat: `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></svg>`,
   };
   let saved = new Set(), saving = null, saveMsg = "";
 
   let P = null, part = store.get("ncc-part") || null, pi = -1, mode = "part", fi = 0, loop = null, speed = 1, err = "";
+  // Where ▶ starts when the open piece's track isn't loaded yet (0, or the spot remembered from last time).
+  let resumeAt = 0;
+  const loaded = () => !!audio.dataset.id;
+  const nowT = () => loaded() ? (audio.currentTime || 0) : resumeAt;
   const audio = new Audio(); audio.preload = "metadata";
 
   function fmt(t) { if (t == null || !isFinite(t)) return "–:––"; t = Math.max(0, t); const m = Math.floor(t / 60), s = Math.floor(t % 60); return m + ":" + (s < 10 ? "0" : "") + s; }
@@ -219,11 +224,11 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   }
   function setMode(m) {
     if (m === mode) return;
-    const pc = piece(), was = !audio.paused, cur = sectionAt(pc, mode, fi, audio.currentTime || 0);
+    const pc = piece(), was = loaded() && !audio.paused, cur = sectionAt(pc, mode, fi, nowT());
     let target = cur && startOf(pc, cur, m);
     if (!target) {
       // nearest earlier section that has a start on both tracks
-      const here = audio.currentTime || 0;
+      const here = nowT();
       const cands = pc.sections.map(s => [startOf(pc, s, mode), startOf(pc, s, m)]).filter(([a, b]) => a && b && a.f === fi && a.t <= here + 0.05);
       const last = cands.sort((x, y) => x[0].t - y[0].t).pop();
       target = last ? last[1] : { f: m === "rec" ? 0 : Math.min(fi, Math.max(0, track(pc, m).length - 1)), t: 0 };
@@ -237,18 +242,29 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     if (loop) loop = { sec: s, ...sectionEnd(piece(), mode, s) };
     load(st.f, st.t, true);
   }
+  // Remember the open piece and the spot in it, so next visit ▶ carries on from there.
+  let placeSaved = 0;
+  function savePlace() {
+    if (!P || pi < 0) return;
+    store.set("ncc-place", JSON.stringify({ p: piece().name, m: mode, f: fi, t: Math.round(nowT() * 10) / 10 }));
+    placeSaved = Date.now();
+  }
   audio.addEventListener("timeupdate", () => {
     if (loop && fi === loop.f && loop.b != null && audio.currentTime >= loop.b - 0.05) audio.currentTime = loop.a;
+    if (Date.now() - placeSaved > 5000) savePlace();
     tick();
   });
   audio.addEventListener("ended", () => {
     if (loop && fi === loop.f) { audio.currentTime = loop.a; audio.play().catch(() => {}); return; }
     const files = track(piece(), mode);
     if (fi < files.length - 1) load(fi + 1, 0, true);
+    else if (pi < P.pieces.length - 1) openPiece(pi + 1, true);   // like an album: on to the next piece
+    else { openPiece(0, false); }                                  // end of the program: back to the top, ready
   });
-  ["play", "pause"].forEach(e => audio.addEventListener(e, () => { renderPlayButtons(); renderBar(); media(); }));
+  ["play", "pause"].forEach(e => audio.addEventListener(e, () => { renderPlayButtons(); renderBar(); media(); savePlace(); }));
+  window.addEventListener("pagehide", savePlace);
   // Update the ▶/❚❚ markers in the list without rebuilding it.
-  function renderPlayButtons() { document.querySelectorAll(".pr").forEach(b => { const i = +b.dataset.piece, cur = i === pi, playing = cur && !audio.paused; b.querySelector(".n").textContent = playing ? "❚❚" : cur ? "▶" : i + 1; b.setAttribute("aria-label", (playing ? "Pause " : "Play ") + P.pieces[i].name); }); }
+  function renderPlayButtons() { document.querySelectorAll(".pr").forEach(b => { const i = +b.dataset.piece, cur = i === pi, playing = cur && !audio.paused; b.querySelector(".n").textContent = playing ? "❚❚" : cur ? "▶" : i + 1; b.setAttribute("aria-label", (cur ? "" : "Open ") + P.pieces[i].name + (playing ? ", playing" : cur ? ", open" : "")); }); }
   audio.addEventListener("loadedmetadata", tick);
   audio.addEventListener("error", () => {
     if (!audio.dataset.id) return;
@@ -257,7 +273,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   });
   function tick() {
     if (!P || pi < 0) return;
-    const pc = piece(), t = audio.currentTime || 0, s = sectionAt(pc, mode, fi, t);
+    const pc = piece(), t = nowT(), s = sectionAt(pc, mode, fi, t);
     const c = $("#clk"); if (c) c.textContent = fmt(t);
     const d = $("#dur"); if (d) d.textContent = audio.duration ? "of " + fmt(audio.duration) : "";
     const n = $("#now"); if (n) n.textContent = s ? s.name : "";
@@ -266,12 +282,13 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     const pb = $("#pitch"); if (pb) { const ps = s && s.pitch ? s : null; pb.hidden = !ps; if (ps) { pb.textContent = "♪ " + ps.pitch; pb.dataset.p = ps.pitch; } }
     const bs = $("#barsec"); if (bs) bs.textContent = s ? " · " + s.name : "";
     const tc = $("#tcur"); if (tc) tc.textContent = fmt(t);
-    const td = $("#tdur"); if (td) td.textContent = audio.duration ? fmt(audio.duration) : "–:––";
+    const dur = loaded() ? audio.duration : mode === "rec" ? (pc.recording || {}).dur : (track(pc, mode)[fi] || {}).dur;
+    const td = $("#tdur"); if (td) td.textContent = dur ? fmt(dur) : "–:––";
     const pf = $("#progfill"); if (pf) {
       const files = track(pc, mode), before = files.slice(0, fi).reduce((n, f) => n + (f.dur || 0), 0), all = files.reduce((n, f) => n + (f.dur || 0), 0);
-      pf.style.width = (all ? Math.min(100, (before + t) / all * 100) : (audio.duration ? t / audio.duration * 100 : 0)) + "%";
+      pf.style.width = (all ? Math.min(100, (before + t) / all * 100) : (dur ? t / dur * 100 : 0)) + "%";
     }
-    const ms = $("#mscrub"); if (ms && audio.duration && document.activeElement !== ms) { ms.max = audio.duration; ms.value = t; }
+    const ms = $("#mscrub"); if (ms && loaded() && audio.duration && document.activeElement !== ms) { ms.max = audio.duration; ms.value = t; }
   }
   function modeLabel() { const m = modes(piece()).find(x => x.m === mode); return m ? m.label : ""; }
   function media() {
@@ -281,7 +298,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
       ms.setActionHandler("play", () => audio.play().catch(() => {}));
       ms.setActionHandler("pause", () => audio.pause());
       ms.setActionHandler("seekbackward", () => { audio.currentTime = Math.max(0, audio.currentTime - BACK); });
-      ms.setActionHandler("seekforward", () => { audio.currentTime += 10; });
+      ms.setActionHandler("seekforward", () => { audio.currentTime += BACK; });
       ms.setActionHandler("previoustrack", () => prevPress());
       ms.setActionHandler("nexttrack", () => nextPress());
     } catch (e) {}
@@ -405,7 +422,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
       const m = cur ? mode : (mode === "part2" ? "part" : mode);
       const d = totalDur(pc, m === "rec" && !pc.recording ? "part" : m);
       return `<li class="${cur ? "cur" : ""}">
-        <button class="pr" data-piece="${i}" aria-current="${cur}" aria-label="${playing ? "Pause" : "Play"} ${esc(pc.name)}">
+        <button class="pr" data-piece="${i}" aria-current="${cur}" aria-label="${cur ? "" : "Open "}${esc(pc.name)}${playing ? ", playing" : cur ? ", open" : ""}">
           <span class="n" aria-hidden="true">${playing ? "❚❚" : cur ? "▶" : i + 1}</span>
           <span class="nm"><b>${esc(pc.name)}</b><span>${esc(pc.composer || "")}</span></span>
           <span class="du">${d ? fmt(d) : ""}</span>
@@ -454,15 +471,16 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
           ${canSave ? `<button class="dl" id="dl" data-act="dl" aria-label="Save for offline">${ICON.dl}</button>` : ""}
           ${o ? `<button class="sw" data-mode="${o.m}" aria-label="Switch to ${esc(o.label)}">⇄ ${esc(o.label)}</button>` : ""}
         </div>
-        <div class="seek"><span id="tcur">${fmt(idle ? 0 : audio.currentTime)}</span>
-          <input type="range" id="mscrub" min="0" max="${audio.duration || 1}" step="0.5" value="${idle ? 0 : audio.currentTime || 0}" aria-label="Position in the track" ${idle ? "disabled" : ""}>
-          <span id="tdur">${idle || !audio.duration ? "–:––" : fmt(audio.duration)}</span></div>
+        <div class="seek"><span id="tcur">${fmt(idle ? 0 : nowT())}</span>
+          <input type="range" id="mscrub" min="0" max="${loaded() && audio.duration ? audio.duration : 1}" step="0.5" value="${idle || !loaded() ? 0 : audio.currentTime || 0}" aria-label="Position in the track" ${idle || !loaded() ? "disabled" : ""}>
+          <span id="tdur">${idle || !loaded() || !audio.duration ? "–:––" : fmt(audio.duration)}</span></div>
         <div class="ctl">
-          <button class="ib" data-act="back" aria-label="Back ${BACK} seconds" ${idle ? "disabled" : ""}>${ICON.back}<small>Back ${BACK}</small></button>
           <button class="ib" data-act="prev" aria-label="Restart, or tap twice for the previous piece" ${idle ? "disabled" : ""}>⏮<small>Restart</small></button>
+          <button class="ib" data-act="back" aria-label="Back ${BACK} seconds" ${idle ? "disabled" : ""}>${ICON.back}<small>Back ${BACK}</small></button>
           <button class="play" data-act="${idle ? "first" : "play"}" aria-label="${playing ? "Pause" : "Play"}">${playing ? "❚❚" : "▶"}</button>
+          <button class="ib" data-act="fwd" aria-label="Forward ${BACK} seconds" ${idle ? "disabled" : ""}>${ICON.fwd}<small>Fwd ${BACK}</small></button>
           <button class="ib" data-act="next" aria-label="Next piece" ${idle || pi >= P.pieces.length - 1 ? "disabled" : ""}>⏭<small>Next</small></button>
-          <button class="ib" data-act="loop" aria-pressed="${!!loop}" aria-label="${loop ? "Stop repeating this section" : "Repeat this section"}" ${idle ? "disabled" : ""}>${ICON.repeat}<small>${loop ? "Repeating" : "Repeat"}</small></button>
+          <button class="ib" data-act="loop" aria-pressed="${!!loop}" aria-label="${loop ? "Stop repeating this section" : "Repeat this section"}" ${idle ? "disabled" : ""}>${ICON.repeat}<small>${loop ? "Repeating" : "Repeat"}<br>section</small></button>
         </div></div>`;
     renderOffline(); tick();
   }
@@ -473,12 +491,13 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     if (want === "part2" && altOf(pc)) return "part2";
     return part && pc.tracks[part] ? "part" : (pc.recording ? "rec" : "part");
   }
-  // Open piece n. Keeps listening to the same kind of track (your part or the full choir).
-  function openPiece(n, play) {
-    audio.pause(); audio.dataset.id = ""; pi = n; fi = 0; loop = null; err = "";
+  // Open piece n, ready to play from the start (or from `at` in file `f`). Nothing sounds unless `play`.
+  // Keeps listening to the same kind of track (your part or the full choir).
+  function openPiece(n, play, f = 0, at = 0) {
+    audio.pause(); audio.dataset.id = ""; pi = n; fi = f; loop = null; err = ""; resumeAt = at;
     mode = modeFor(P.pieces[n], mode);
     renderList();
-    load(0, 0, play);
+    if (play) load(f, at, true); else { renderBar(); savePlace(); }
   }
   function chooseMode(m) {
     if (pi < 0) { mode = m; render(); return; }
@@ -489,7 +508,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   function choosePart(p) {
     part = p; store.set("ncc-part", part);
     if (pi >= 0) {
-      const was = !audio.paused, s = sectionAt(piece(), mode, fi, audio.currentTime || 0);
+      const was = loaded() && !audio.paused, s = sectionAt(piece(), mode, fi, nowT());
       audio.pause(); audio.dataset.id = ""; loop = null;
       mode = modeFor(piece(), "part");
       render();
@@ -501,19 +520,20 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   let lastPrev = 0;
   function prevPress() {
     const now = Date.now(), quick = now - lastPrev < 1500; lastPrev = now;
-    if (!quick && (audio.currentTime || 0) > 3) { audio.currentTime = 0; tick(); return; }
+    if (!quick && nowT() > 3) { if (loaded()) audio.currentTime = 0; else resumeAt = 0; tick(); return; }
     lastPrev = 0;
-    if (pi > 0) openPiece(pi - 1, !audio.paused); else { audio.currentTime = 0; tick(); }
+    if (pi > 0) openPiece(pi - 1, loaded() && !audio.paused); else { if (loaded()) audio.currentTime = 0; else resumeAt = 0; tick(); }
   }
-  function nextPress() { if (pi < P.pieces.length - 1) openPiece(pi + 1, !audio.paused); }
+  function nextPress() { if (pi < P.pieces.length - 1) openPiece(pi + 1, loaded() && !audio.paused); }
 
   /* ----- events ----- */
   document.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
+    // Tapping a piece opens it (sections, and the player at the top) without playing; ▶ or a section plays.
     if (b.dataset.piece != null) {
       const n = +b.dataset.piece;
-      if (n === pi) { if (!audio.dataset.id) load(fi, 0, true); else if (audio.paused) audio.play().catch(() => {}); else audio.pause(); }
-      else openPiece(n, true);
+      if (n !== pi) openPiece(n, false);
+      const o = $("#open"); if (o) o.closest("li").scrollIntoView({ behavior: "smooth", block: "nearest" });
       return;
     }
     if (b.dataset.part != null && b.classList.contains("opt")) { const sh = $("#sheet"); if (sh && sh.open) sh.close(); choosePart(b.dataset.part); return; }
@@ -537,12 +557,13 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
       case "goto": { const o = $("#open"); if (o) o.closest("li").scrollIntoView({ behavior: "smooth", block: "start" }); break; }
       case "save": saveAll(); break;
       case "unsave": unsaveAll(); break;
-      case "play": if (!audio.dataset.id) load(fi, 0, true); else if (audio.paused) audio.play().catch(() => {}); else audio.pause(); break;
-      case "back": audio.currentTime = Math.max(0, audio.currentTime - BACK); tick(); break;
+      case "play": if (!loaded()) load(fi, resumeAt, true); else if (audio.paused) audio.play().catch(() => {}); else audio.pause(); break;
+      case "back": if (loaded()) audio.currentTime = Math.max(0, audio.currentTime - BACK); else resumeAt = Math.max(0, resumeAt - BACK); tick(); break;
+      case "fwd": if (loaded()) audio.currentTime = Math.min((audio.duration || 1e9) - 0.5, audio.currentTime + BACK); else resumeAt += BACK; tick(); break;
       case "pitch": playNote(b.dataset.p); break;
       case "loop": {
         if (loop) loop = null;
-        else { const s = sectionAt(piece(), mode, fi, audio.currentTime || 0); if (s) loop = { sec: s, ...sectionEnd(piece(), mode, s) }; }
+        else { const s = sectionAt(piece(), mode, fi, nowT()); if (s) loop = { sec: s, ...sectionEnd(piece(), mode, s) }; }
         renderBar(); renderSecs(); break;
       }
     }
@@ -639,9 +660,15 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   function start(d) {
     P = d; document.title = P.title || "Choir Practice";
     if (part && !P.parts.includes(part)) part = null;
-    mode = "rec";   // always open on the full choir
-    // Start on the first piece, ready to play (nothing downloads until ▶).
-    if (P.pieces.length) { pi = 0; fi = 0; mode = modeFor(P.pieces[0], "rec"); }
+    mode = "rec";   // first visit: the full choir
+    // Open the piece and spot from last time (else the first piece), ready to play; nothing downloads until ▶.
+    let place = null; try { place = JSON.parse(store.get("ncc-place") || "null"); } catch (e) {}
+    const at = place ? P.pieces.findIndex(pc => pc.name === place.p) : -1;
+    if (at >= 0) {
+      pi = at; mode = modeFor(P.pieces[at], place.m || "rec");
+      const files = track(P.pieces[at], mode);
+      fi = place.f > 0 && place.f < files.length ? place.f : 0; resumeAt = place.m === mode ? Math.max(0, place.t || 0) : 0;
+    } else if (P.pieces.length) { pi = 0; fi = 0; resumeAt = 0; mode = modeFor(P.pieces[0], "rec"); }
     render();
     refreshSaved();
   }
