@@ -80,14 +80,18 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
 .chip[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:var(--on)}
 .chip select{border:0;padding:0 2px;min-height:0;background:transparent;font-weight:700;font-size:inherit}
 .secs{display:flex;flex-direction:column;background:var(--surface);border-radius:14px;padding:4px}
-.sec{display:grid;grid-template-columns:3.6em 1fr auto;gap:10px;align-items:baseline;text-align:left;border:0;background:none;padding:11px 10px;border-radius:10px;width:100%;min-height:48px}
-.sec+.sec{box-shadow:0 -1px 0 var(--line)}
+.secr{display:grid;grid-template-columns:1fr 48px;align-items:center;border-radius:10px}
+.secr+.secr{box-shadow:0 -1px 0 var(--line)}
+.sec{display:grid;grid-template-columns:3.6em 1fr auto;gap:10px;align-items:baseline;text-align:left;border:0;background:none;padding:11px 4px 11px 10px;border-radius:10px;width:100%;min-height:48px}
+.rp{width:44px;height:44px;border:0;border-radius:999px;background:none;color:var(--muted);display:grid;place-items:center;justify-self:center}
+.rp[aria-pressed="true"]{background:var(--c);color:var(--on)}
+.rp:disabled{opacity:.25}
+.secr.on{background:var(--cs);box-shadow:inset 4px 0 0 var(--c)}
+.secr.on .sec .d,.secr.on .sec .m{font-weight:700;color:var(--ink)}
 .sec .m{font-size:.85rem;color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums}
 .sec .d{min-width:0}
 .sec .tm{font-variant-numeric:tabular-nums;color:var(--c);font-weight:700;font-size:.9rem}
 .sec .pg{font-size:.8rem;color:var(--muted);margin-left:8px;text-decoration:underline}
-.sec.on{background:var(--cs);box-shadow:inset 4px 0 0 var(--c)}
-.sec.on .d,.sec.on .m{font-weight:700;color:var(--ink)}
 .sec:disabled{opacity:1;color:var(--muted)}
 .sec:disabled .tm{color:var(--muted);font-weight:400;font-size:.8rem}
 
@@ -112,11 +116,13 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
 .bar .sw{flex:none;max-width:42%;min-height:40px;border-radius:999px;border:1px solid var(--o);background:var(--os);color:var(--o);font-weight:700;font-size:.85rem;padding:0 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bar .seek{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-top:4px;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .bar .seek input{width:100%;height:28px;margin:0;accent-color:var(--c)}
-.bar .ctl{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:2px}
-.bar .ib{width:44px;height:44px;border-radius:999px;border:0;background:transparent;font-weight:700;font-size:.85rem;flex:none}
+.bar .ctl{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:2px}
+.bar .ib{width:60px;min-height:52px;border-radius:14px;border:0;background:transparent;font-weight:700;font-size:1.15rem;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 0;line-height:1}
+.bar .ib small{font-size:.68rem;font-weight:700;color:var(--muted);letter-spacing:.01em}
 .bar .ib[aria-pressed="true"]{background:var(--c);color:var(--on)}
+.bar .ib[aria-pressed="true"] small{color:var(--on)}
 .bar .play{width:56px;height:56px;border-radius:999px;border:0;background:var(--c);color:var(--on);font-size:1.3rem;flex:none}
-@media (max-width:360px){.bar .ctl{gap:4px}}
+@media (max-width:360px){.bar .ctl{gap:0}.bar .ib{width:54px}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 .bar .dl{flex:none;width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:.8rem;color:var(--muted)}
 .bar .dl.done{color:var(--accent);border-color:var(--accent)}
@@ -143,6 +149,12 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   const src = id => `${API}${encodeURIComponent(id)}?alt=media&key=${encodeURIComponent(KEY)}`;
   const AUDIO = "ncc-audio-v1", audioKey = id => "https://ncc-audio.local/" + id;
   const canSave = "serviceWorker" in navigator && "caches" in window;
+  const BACK = 5;   // seconds the Back button jumps: about two bars, enough to catch the start of a phrase
+  const ICON = {
+    dl: `<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto"><path d="M12 3.5v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>`,
+    back: `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5a7.5 7.5 0 1 1-7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14.5 2 12 4.5 14.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="12" y="15.6" text-anchor="middle" font-size="9" font-weight="700" fill="currentColor" font-family="system-ui,sans-serif">${BACK}</text></svg>`,
+    repeat: `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></svg>`,
+  };
   let saved = new Set(), saving = null, saveMsg = "";
 
   let P = null, part = store.get("ncc-part") || null, pi = -1, mode = "part", fi = 0, loop = null, speed = 1, err = "";
@@ -243,7 +255,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     const d = $("#dur"); if (d) d.textContent = audio.duration ? "of " + fmt(audio.duration) : "";
     const n = $("#now"); if (n) n.textContent = s ? s.name : "";
     const r = $("#scrub"); if (r && audio.duration && document.activeElement !== r) { r.max = audio.duration; r.value = t; }
-    document.querySelectorAll(".sec[data-i]").forEach(b => b.classList.toggle("on", !!s && pc.sections[+b.dataset.i] === s));
+    document.querySelectorAll(".secr[data-row]").forEach(b => b.classList.toggle("on", !!s && pc.sections[+b.dataset.row] === s));
     const pb = $("#pitch"); if (pb) { const ps = s && s.pitch ? s : null; pb.hidden = !ps; if (ps) { pb.textContent = "♪ " + ps.pitch; pb.dataset.p = ps.pitch; } }
     const bs = $("#barsec"); if (bs) bs.textContent = s ? " · " + s.name : "";
     const tc = $("#tcur"); if (tc) tc.textContent = fmt(t);
@@ -261,7 +273,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
       ms.metadata = new MediaMetadata({ title: piece().name, artist: modeLabel(), album: P.title });
       ms.setActionHandler("play", () => audio.play().catch(() => {}));
       ms.setActionHandler("pause", () => audio.pause());
-      ms.setActionHandler("seekbackward", () => { audio.currentTime = Math.max(0, audio.currentTime - 10); });
+      ms.setActionHandler("seekbackward", () => { audio.currentTime = Math.max(0, audio.currentTime - BACK); });
       ms.setActionHandler("seekforward", () => { audio.currentTime += 10; });
       ms.setActionHandler("previoustrack", () => prevPress());
       ms.setActionHandler("nexttrack", () => nextPress());
@@ -310,7 +322,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     const s = offlineState(), btn = $("#dl");
     if (btn) {
       const done = !s.missing.length && s.list.length;
-      btn.textContent = saving ? `${saving.done}/${saving.total}` : done ? "✓" : "⬇";
+      btn.innerHTML = saving ? `${saving.done}/${saving.total}` : done ? "✓" : ICON.dl;
       btn.classList.toggle("done", !!done && !saving);
       btn.setAttribute("aria-label", saving ? `Saving ${saving.done} of ${saving.total} for offline` : done ? "Saved for offline" : "Save for offline");
     }
@@ -414,8 +426,9 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     const el = $("#secs"); if (!el) return;
     const pc = piece();
     el.innerHTML = pc.sections.map((s, i) => {
-      const st = startOf(pc, s, mode), [m, d] = splitName(s.name);
-      return `<button class="sec" data-i="${i}" ${st ? "" : "disabled"}><span class="m">${esc(m)}</span><span class="d">${esc(d)}</span><span class="tm">${st ? fmt(st.t) : "not set"}</span></button>`;
+      const st = startOf(pc, s, mode), [m, d] = splitName(s.name), on = !!loop && loop.sec === s;
+      return `<div class="secr" data-row="${i}"><button class="sec" data-i="${i}" ${st ? "" : "disabled"}><span class="m">${esc(m)}</span><span class="d">${esc(d)}</span><span class="tm">${st ? fmt(st.t) : "not set"}</span></button>
+        <button class="rp" data-rep="${i}" aria-pressed="${on}" aria-label="${on ? "Stop repeating" : "Repeat"} ${esc(s.name)}" ${st ? "" : "disabled"}>${ICON.repeat}</button></div>`;
     }).join("") || `<p class="muted" style="padding:10px">No sections yet.</p>`;
     tick();
   }
@@ -431,19 +444,18 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
         <div class="top">
           <button class="what" data-act="goto" ${idle ? "disabled" : ""} aria-label="${idle ? "Nothing playing" : "Show " + esc(piece().name)}"><b>${esc(idle ? "Pick a piece" : piece().name)}</b>
             <span class="secl"><span class="trk">${esc(label)}</span><span id="barsec"></span></span></button>
-          ${canSave ? `<button class="dl" id="dl" data-act="dl" aria-label="Save for offline">⬇</button>` : ""}
+          ${canSave ? `<button class="dl" id="dl" data-act="dl" aria-label="Save for offline">${ICON.dl}</button>` : ""}
           ${o ? `<button class="sw" data-mode="${o.m}" aria-label="Switch to ${esc(o.label)}">⇄ ${esc(o.label)}</button>` : ""}
         </div>
         <div class="seek"><span id="tcur">${fmt(idle ? 0 : audio.currentTime)}</span>
           <input type="range" id="mscrub" min="0" max="${audio.duration || 1}" step="0.5" value="${idle ? 0 : audio.currentTime || 0}" aria-label="Position in the track" ${idle ? "disabled" : ""}>
           <span id="tdur">${idle || !audio.duration ? "–:––" : fmt(audio.duration)}</span></div>
         <div class="ctl">
-          <button class="ib" data-act="loop" aria-pressed="${!!loop}" aria-label="${loop ? "Stop repeating" : "Repeat this section"}" ${idle ? "disabled" : ""}>⟲</button>
-          <button class="ib" data-act="back" aria-label="Back 10 seconds" ${idle ? "disabled" : ""}>−10</button>
-          <button class="ib" data-act="prev" aria-label="Restart, or tap twice for the previous piece" ${idle ? "disabled" : ""}>⏮</button>
+          <button class="ib" data-act="back" aria-label="Back ${BACK} seconds" ${idle ? "disabled" : ""}>${ICON.back}<small>Back ${BACK}</small></button>
+          <button class="ib" data-act="prev" aria-label="Restart, or tap twice for the previous piece" ${idle ? "disabled" : ""}>⏮<small>Restart</small></button>
           <button class="play" data-act="${idle ? "first" : "play"}" aria-label="${playing ? "Pause" : "Play"}">${playing ? "❚❚" : "▶"}</button>
-          <button class="ib" data-act="next" aria-label="Next piece" ${idle || pi >= P.pieces.length - 1 ? "disabled" : ""}>⏭</button>
-          <button class="ib" data-act="fwd" aria-label="Forward 10 seconds" ${idle ? "disabled" : ""}>+10</button>
+          <button class="ib" data-act="next" aria-label="Next piece" ${idle || pi >= P.pieces.length - 1 ? "disabled" : ""}>⏭<small>Next</small></button>
+          <button class="ib" data-act="loop" aria-pressed="${!!loop}" aria-label="${loop ? "Stop repeating this section" : "Repeat this section"}" ${idle ? "disabled" : ""}>${ICON.repeat}<small>${loop ? "Repeating" : "Repeat"}</small></button>
         </div></div>`;
     renderOffline(); tick();
   }
@@ -500,6 +512,13 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     if (b.dataset.part != null && b.classList.contains("opt")) { const sh = $("#sheet"); if (sh && sh.open) sh.close(); choosePart(b.dataset.part); return; }
     if (b.dataset.mode) { chooseMode(b.dataset.mode); return; }
     if (b.dataset.i != null) { jump(piece().sections[+b.dataset.i]); return; }
+    // The repeat button on a section row: go there and keep repeating it (tap again to stop).
+    if (b.dataset.rep != null) {
+      const s = piece().sections[+b.dataset.rep];
+      if (loop && loop.sec === s) loop = null;
+      else { const st = startOf(piece(), s, mode); if (!st) return; loop = { sec: s, ...sectionEnd(piece(), mode, s) }; load(st.f, st.t, true); }
+      renderBar(); renderSecs(); return;
+    }
     switch (b.dataset.act) {
       case "first": openPiece(0, true); break;
       case "seg-rec": chooseMode("rec"); break;
@@ -512,13 +531,12 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
       case "save": saveAll(); break;
       case "unsave": unsaveAll(); break;
       case "play": if (!audio.dataset.id) load(fi, 0, true); else if (audio.paused) audio.play().catch(() => {}); else audio.pause(); break;
-      case "back": audio.currentTime = Math.max(0, audio.currentTime - 10); break;
-      case "fwd": audio.currentTime = Math.min(audio.duration || 1e9, audio.currentTime + 10); break;
+      case "back": audio.currentTime = Math.max(0, audio.currentTime - BACK); tick(); break;
       case "pitch": playNote(b.dataset.p); break;
       case "loop": {
         if (loop) loop = null;
         else { const s = sectionAt(piece(), mode, fi, audio.currentTime || 0); if (s) loop = { sec: s, ...sectionEnd(piece(), mode, s) }; }
-        renderBar(); break;
+        renderBar(); renderSecs(); break;
       }
     }
   });
