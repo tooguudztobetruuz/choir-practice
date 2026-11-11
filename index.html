@@ -39,6 +39,14 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 button:disabled{opacity:.4;cursor:default}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .muted{color:var(--muted)}
+.help{border:0;background:none;padding:6px 0 0;color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-size:.95rem}
+.sheet.guide{max-height:92vh}
+.guide .ghd{display:flex;justify-content:space-between;align-items:center;padding-right:8px}
+.guide .gx{border:0;background:none;width:44px;height:44px;font-size:1.1rem;color:var(--muted)}
+.guide .gbody{padding:0 16px max(16px,env(safe-area-inset-bottom));overflow:auto;max-height:calc(92vh - 60px)}
+.guide img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--line)}
+.guide p{margin:12px 0 0;font-size:.95rem}
+.guide a{color:var(--accent)}
 .hint{color:var(--muted);font-size:.95rem;margin:-4px 0 -6px}
 .eyebrow{font-size:.85rem;color:var(--muted);font-weight:400}
 .sub{color:var(--muted);font-size:.95rem}
@@ -424,13 +432,18 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   }
   function render() {
     const hasPart = !!part, partOn = mode !== "rec";
-    $("#app").innerHTML = `<header><p class="eyebrow">${esc(P.org)}</p><h1>${esc(P.title)}</h1>${P.sub ? `<p class="sub">${esc(P.sub)}</p>` : ""}</header>
+    $("#app").innerHTML = `<header><p class="eyebrow">${esc(P.org)}</p><h1>${esc(P.title)}</h1>${P.sub ? `<p class="sub">${esc(P.sub)}</p>` : ""}<button class="help" data-act="help">How to use</button></header>
       ${hasPart ? "" : `<p class="hint">Choose your part, then tap ▶ or a section.</p>`}
       <div class="switch" role="group" aria-label="What to play">
         <button class="seg c-rec" data-act="seg-rec" aria-pressed="${!partOn}">Full choir</button>
         <button class="seg c-part${hasPart ? "" : " ask"}" data-act="seg-part" aria-pressed="${partOn && hasPart}" aria-haspopup="dialog">${esc(hasPart ? part : "My part")} <svg class="car" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
       <ol class="pl" id="pl" aria-label="Pieces"></ol>
+      <dialog class="sheet guide" id="helpsheet" aria-label="How to use"><div class="ghd"><p class="hd">How to use</p><button class="gx" data-act="helpclose" aria-label="Close">✕</button></div>
+        <div class="gbody"><a href="quickstart.jpg" target="_blank" rel="noopener"><img src="quickstart.jpg" alt="Quick start: choose your part, open a piece, press play or tap a section; repeat a section; skip back or ahead 5 seconds; switch between full choir and your part; save for offline." loading="lazy"></a>
+        <p class="muted">Tap the picture to see it full size.</p>
+        <p><a href="quickstart.pdf" target="_blank" rel="noopener">Open as a PDF to print or share</a></p>
+        <p><a href="https://docs.google.com/document/d/1RvjKht25T53DQexqzA89nWEwSmLf3DJgtPNLVf07fCI/view" target="_blank" rel="noopener">Read the full guide</a> (practice tips, saving for offline, help)</p></div></dialog>
       <dialog class="sheet" id="offsheet" aria-label="Save for offline"><p class="hd">Practice without internet</p><div class="body"></div></dialog>
       <dialog class="sheet" id="sheet" aria-label="Choose your part"><p class="hd">Which part do you sing?</p>
         <div class="opts">${P.parts.map(x => `<button class="opt" data-part="${esc(x)}" aria-current="${x === part}">${esc(x)}${x === part ? " <span>✓</span>" : ""}</button>`).join("")}</div></dialog>`;
@@ -578,6 +591,8 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
       case "seg-rec": chooseMode("rec"); break;
       case "seg-part": if (!part || mode !== "rec") openSheet(); else chooseMode("part"); break;
       case "dl": { renderOffline(); const sh = $("#offsheet"); if (sh && sh.showModal) sh.showModal(); break; }
+      case "help": { const sh = $("#helpsheet"); if (sh && sh.showModal) sh.showModal(); break; }
+      case "helpclose": { const sh = $("#helpsheet"); if (sh && sh.open) sh.close(); break; }
       case "offclose": { const sh = $("#offsheet"); if (sh && sh.open) sh.close(); break; }
       case "prev": prevPress(); break;
       case "next": nextPress(); break;
