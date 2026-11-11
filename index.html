@@ -609,6 +609,8 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     P = d; document.title = P.title || "Choir Practice";
     if (part && !P.parts.includes(part)) part = null;
     mode = "rec";   // always open on the full choir
+    // Start on the first piece, ready to play (nothing downloads until ▶).
+    if (P.pieces.length) { pi = 0; fi = 0; mode = modeFor(P.pieces[0], "rec"); }
     render();
     refreshSaved();
   }
