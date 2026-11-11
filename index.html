@@ -66,6 +66,32 @@ input[type=range]{width:100%;height:36px;accent-color:var(--c)}
 .sec:disabled .tm{color:var(--muted);font-weight:400;font-size:.9rem}
 .msg{border-left:4px solid var(--warn);padding:8px 12px;background:var(--surface);border-radius:8px}
 select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+/* Part choice + Full choir / My part */
+.setup{display:flex;flex-direction:column;gap:10px}
+.partsel{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:10px 12px 10px 16px;font-weight:700}
+.partsel select{font-weight:700;min-height:44px;max-width:60%}
+.partsel.ask{border-color:var(--accent);background:var(--accent-soft)}
+.setup .tabs{background:var(--surface);border:2px solid var(--line)}
+.tab:disabled{opacity:.45;cursor:default}
+/* Playlist */
+.pl{list-style:none;margin:0;padding:0;background:var(--surface);border:2px solid var(--line);border-radius:18px;overflow:hidden}
+.pl>li+li{border-top:1px solid var(--line)}
+.pr{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:14px 16px;min-height:72px}
+.pr .n{width:40px;height:40px;border-radius:999px;display:grid;place-items:center;font-weight:700;color:var(--muted);border:2px solid var(--line);font-size:.95rem}
+.pr .nm{min-width:0}
+.pr .nm b{display:block;font-size:1.1rem}
+.pr .nm span{display:block;color:var(--muted);font-size:.9rem}
+.pr .du{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.95rem}
+.pl li.cur{background:var(--cs)}
+.pl li.cur .n{background:var(--c);border-color:var(--c);color:var(--on)}
+.pl li.cur .nm b{color:var(--c)}
+.open{padding:0 12px 14px;display:flex;flex-direction:column;gap:12px}
+.open .secs{background:var(--surface);border-radius:14px;padding:4px}
+.open .mv select{flex:1}
+.chip{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:700;min-height:44px}
+.chip[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:var(--on)}
+a.tool{display:flex;align-items:center;justify-content:center;text-decoration:none;color:inherit}
+#offline h2{font-size:1.15rem}
 /* Pinned player: stays at the top while scrolling */
 .bar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:2px solid var(--line);
   margin:0 calc(-1 * max(16px,env(safe-area-inset-right))) 0 calc(-1 * max(16px,env(safe-area-inset-left)));
@@ -100,7 +126,7 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
   const canSave = "serviceWorker" in navigator && "caches" in window;
   let saved = new Set(), saving = null, saveMsg = "";
 
-  let P = null, part = store.get("ncc-part"), view = "home", pi = -1, mode = "part", fi = 0, loop = null, speed = 1, err = "";
+  let P = null, part = store.get("ncc-part") || null, pi = -1, mode = "part", fi = 0, loop = null, speed = 1, err = "";
   const audio = new Audio(); audio.preload = "metadata";
 
   function fmt(t) { if (t == null || !isFinite(t)) return "–:––"; t = Math.max(0, t); const m = Math.floor(t / 60), s = Math.floor(t % 60); return m + ":" + (s < 10 ? "0" : "") + s; }
@@ -178,7 +204,9 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
     const files = track(piece(), mode);
     if (fi < files.length - 1) load(fi + 1, 0, true);
   });
-  ["play", "pause"].forEach(e => audio.addEventListener(e, () => { renderPlayer(); renderBar(); media(); }));
+  ["play", "pause"].forEach(e => audio.addEventListener(e, () => { renderPlayButtons(); renderBar(); media(); }));
+  // Update the ▶/❚❚ markers in the list without rebuilding it.
+  function renderPlayButtons() { document.querySelectorAll(".pr").forEach(b => { const i = +b.dataset.piece, cur = i === pi, playing = cur && !audio.paused; b.querySelector(".n").textContent = playing ? "❚❚" : cur ? "▶" : i + 1; b.setAttribute("aria-label", (playing ? "Pause " : "Play ") + P.pieces[i].name); }); }
   audio.addEventListener("loadedmetadata", tick);
   audio.addEventListener("error", () => {
     if (!audio.dataset.id) return;
@@ -186,7 +214,7 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
     renderPlayer();
   });
   function tick() {
-    if (view !== "piece") return;
+    if (!P || pi < 0) return;
     const pc = piece(), t = audio.currentTime || 0, s = sectionAt(pc, mode, fi, t);
     const c = $("#clk"); if (c) c.textContent = fmt(t);
     const d = $("#dur"); if (d) d.textContent = audio.duration ? "of " + fmt(audio.duration) : "";
@@ -224,26 +252,6 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
       g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.4, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 2.2); g.connect(actx.destination);
       [[1, "triangle", 1], [2, "sine", 0.2]].forEach(([k, type, v]) => { const o = actx.createOscillator(), og = actx.createGain(); o.type = type; o.frequency.value = f * k; og.gain.value = v; o.connect(og); og.connect(g); o.start(t0); o.stop(t0 + 2.3); });
     } catch (e) {}
-  }
-
-  /* ----- screens ----- */
-  function header() {
-    return `<header><p class="eyebrow">${esc(P.org)}</p><h1>${esc(P.title)}</h1>${P.sub ? `<p class="muted">${esc(P.sub)}</p>` : ""}</header>`;
-  }
-  function renderPicker() {
-    $("#app").innerHTML = `${header()}
-      <h2>Which part do you sing?</h2>
-      <div class="grid">${P.parts.map(x => `<button class="big" data-part="${esc(x)}" aria-current="${x === part}">${esc(x)}</button>`).join("")}</div>
-      <button class="big" data-part="" style="text-align:center"><b>I'm not sure / just listen</b><span>Plays the full choir</span></button>
-      <p class="muted">You can change this later.</p>`;
-  }
-  function renderHome() {
-    $("#app").innerHTML = `${header()}
-      <p>Your part: <b>${esc(part || "Just listening")}</b> <button class="link" data-act="change">Change</button></p>
-      <h2>Pieces</h2>
-      ${P.pieces.map((pc, i) => `<button class="big" data-piece="${i}"><b>${i + 1}. ${esc(pc.name)}</b><span>${esc(pc.composer || "")}</span></button>`).join("")}
-      ${canSave ? `<section class="card" id="offline" aria-label="Save for offline"></section>` : ""}`;
-    renderOffline();
   }
 
   /* ----- save for offline ----- */
@@ -311,43 +319,63 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
     try { await caches.delete(AUDIO); } catch (e) {}
     saved = new Set(); saveMsg = ""; renderOffline();
   }
-  function renderPiece() {
-    const pc = piece();
-    $("#app").innerHTML = `<button class="link" data-act="home">‹ All pieces</button>
-      <header><p class="eyebrow">Piece ${pi + 1} of ${P.pieces.length}</p><h1>${esc(pc.name)}</h1><p class="muted">${esc(pc.composer || "")}</p></header>
-      <section class="card" id="player" aria-label="Player"></section>
-      <section class="card" aria-label="Sections"><h2>Sections</h2><div class="secs" id="secs"></div>
-        <p class="muted" style="font-size:.9rem">Tap a section to play from there.</p></section>
-      ${pc.score ? `<a class="big" style="text-align:center;text-decoration:none;color:inherit" target="_blank" rel="noopener" href="https://drive.google.com/file/d/${esc(pc.score.id)}/view"><b>Open the score ↗</b></a>` : ""}`;
-    renderPlayer(); renderSecs();
+  /* ----- the playlist: one screen ----- */
+  const totalDur = (pc, m) => m === "rec" ? (pc.recording && pc.recording.dur) : track(pc, m).reduce((n, f) => n + (f.dur || 0), 0);
+  function render() {
+    const hasPart = !!part;
+    $("#app").innerHTML = `<header><p class="eyebrow">${esc(P.org)}</p><h1>${esc(P.title)}</h1>${P.sub ? `<p class="muted">${esc(P.sub)}</p>` : ""}</header>
+      <section class="setup" aria-label="What to play">
+        <label class="partsel${hasPart ? "" : " ask"}"><span>${hasPart ? "Your part" : "Start here: choose your part"}</span>
+          <select id="partSel">${hasPart ? "" : `<option value="" selected disabled>Choose…</option>`}${P.parts.map(x => `<option ${x === part ? "selected" : ""}>${esc(x)}</option>`).join("")}</select></label>
+        <div class="tabs" role="tablist" aria-label="Play">
+          <button class="tab c-rec" role="tab" data-mode="rec" aria-selected="${mode === "rec"}">Full choir</button>
+          <button class="tab c-part" role="tab" data-mode="part" aria-selected="${mode !== "rec"}" ${hasPart ? "" : "disabled"}>${esc(hasPart ? part : "My part")}</button>
+        </div>
+      </section>
+      <ol class="pl" id="pl" aria-label="Pieces"></ol>
+      ${canSave ? `<section class="card" id="offline" aria-label="Save for offline"></section>` : ""}`;
+    renderList(); renderOffline();
   }
+  function renderList() {
+    const el = $("#pl"); if (!el) return;
+    el.className = "pl " + (mode === "rec" ? "c-rec" : "c-part");
+    el.innerHTML = P.pieces.map((pc, i) => {
+      const cur = i === pi, playing = cur && !audio.paused;
+      const m = cur ? mode : (mode === "part2" ? "part" : mode);
+      const d = totalDur(pc, m === "rec" && !pc.recording ? "part" : m);
+      return `<li class="${cur ? "cur" : ""}">
+        <button class="pr" data-piece="${i}" aria-current="${cur}" aria-label="${playing ? "Pause" : "Play"} ${esc(pc.name)}">
+          <span class="n" aria-hidden="true">${playing ? "❚❚" : cur ? "▶" : i + 1}</span>
+          <span class="nm"><b>${esc(pc.name)}</b><span>${esc(pc.composer || "")}</span></span>
+          <span class="du">${d ? fmt(d) : ""}</span>
+        </button>
+        ${cur ? `<div class="open" id="open"></div>` : ""}</li>`;
+    }).join("");
+    renderPlayer();
+  }
+  // The open piece: its sections and practice tools.
   function renderPlayer() {
-    const el = $("#player"); if (!el || view !== "piece") return;
-    const pc = piece(), files = track(pc, mode), playing = !audio.paused;
-    el.className = "card " + (mode === "rec" ? "c-rec" : "c-part");
-    const ms = modes(pc);
-    el.innerHTML = `${ms.length > 1 ? `<div class="tabs" role="tablist" aria-label="Which track">${ms.map(x => `<button class="tab ${x.m === "rec" ? "c-rec" : "c-part"}" role="tab" data-mode="${x.m}" aria-selected="${x.m === mode}">${esc(x.label)}</button>`).join("")}</div>` : ""}
-      ${pc.movements && files.length > 1 ? `<label class="row">Movement <select id="mvt" aria-label="Movement">${files.map((f, i) => `<option value="${i}" ${i === fi ? "selected" : ""}>${esc(pc.movements[f.mvt] || "Movement " + (i + 1))}</option>`).join("")}</select></label>` : ""}
-      <div class="clock"><span class="t" id="clk">${fmt(audio.currentTime)}</span><span class="d" id="dur"></span></div>
-      <p class="now" id="now"></p>
-      <input type="range" id="scrub" min="0" max="${audio.duration || 1}" step="0.5" value="${audio.currentTime || 0}" aria-label="Position in the track">
-      <div class="transport">
-        <button class="round" data-act="back" aria-label="Back 10 seconds">−10</button>
-        <button class="play" data-act="play" aria-label="${playing ? "Pause" : "Play"}">${playing ? "❚❚" : "▶"}</button>
-        <button class="round" data-act="fwd" aria-label="Forward 10 seconds">+10</button>
-      </div>
+    const el = $("#open"); if (!el || pi < 0) return;
+    const pc = piece(), files = track(pc, mode);
+    const t2 = part === "Tenor" && pc.tracks["Tenor 2"] && mode !== "rec";
+    el.innerHTML = `
+      ${t2 ? `<div class="row"><button class="chip" data-mode="part" aria-pressed="${mode === "part"}">Tenor 1</button><button class="chip" data-mode="part2" aria-pressed="${mode === "part2"}">Tenor 2</button></div>` : ""}
+      ${pc.movements && files.length > 1 ? `<label class="row mv">Movement <select id="mvt" aria-label="Movement">${files.map((f, i) => `<option value="${i}" ${i === fi ? "selected" : ""}>${esc(pc.movements[f.mvt] || "Movement " + (i + 1))}</option>`).join("")}</select></label>` : ""}
+      <div class="secs" id="secs"></div>
       <div class="tools">
-        <button class="tool" data-act="loop" aria-pressed="${!!loop}">⟲ ${loop ? "Looping" : "Repeat section"}</button>
+        <button class="tool" data-act="back" aria-label="Back 10 seconds">−10 s</button>
+        <button class="tool" data-act="fwd" aria-label="Forward 10 seconds">+10 s</button>
+        <button class="tool" data-act="loop" aria-pressed="${!!loop}">⟲ ${loop ? "Repeating" : "Repeat section"}</button>
         <button class="tool" id="pitch" data-act="pitch" hidden></button>
         <label class="tool row" style="justify-content:center;gap:6px">Speed <select id="speed" aria-label="Speed">${[0.75, 0.85, 1, 1.1].map(v => `<option value="${v}" ${v === speed ? "selected" : ""}>${v === 1 ? "Normal" : v + "×"}</option>`).join("")}</select></label>
+        ${pc.score ? `<a class="tool" target="_blank" rel="noopener" href="https://drive.google.com/file/d/${esc(pc.score.id)}/view">Score ↗</a>` : ""}
       </div>
       ${err ? `<p class="msg">${esc(err)}</p>` : ""}`;
-    tick();
+    renderSecs();
   }
   function renderSecs() {
     const el = $("#secs"); if (!el) return;
     const pc = piece();
-    el.closest(".card").className = "card " + (mode === "rec" ? "c-rec" : "c-part");
     el.innerHTML = pc.sections.map((s, i) => { const st = startOf(pc, s, mode);
       return `<button class="sec" data-i="${i}" ${st ? "" : "disabled"}><span>${esc(s.name)}</span><span class="tm">${st ? fmt(st.t) : "not set yet"}</span></button>`; }).join("")
       || `<p class="muted">No sections yet.</p>`;
@@ -357,26 +385,51 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
   function otherMode() { const ms = modes(piece()); if (ms.length < 2) return null; return mode === "rec" ? (ms.find(x => x.m === "part") || ms[1]) : ms.find(x => x.m === "rec") || null; }
   function renderBar() {
     const b = $("#bar");
-    if (view === "picker" || !audio.dataset.id || pi < 0) { b.hidden = true; return; }
+    if (!audio.dataset.id || pi < 0) { b.hidden = true; return; }
     const o = otherMode();
     b.hidden = false; b.className = "bar " + (mode === "rec" ? "c-rec" : "c-part");
     b.innerHTML = `<div class="in">
         <button class="sk" data-act="prev" aria-label="Restart, or tap twice for the previous piece">⏮</button>
         <button class="play" data-act="play" aria-label="${audio.paused ? "Play" : "Pause"}">${audio.paused ? "▶" : "❚❚"}</button>
         <button class="sk" data-act="next" aria-label="Next piece" ${pi >= P.pieces.length - 1 ? "disabled" : ""}>⏭</button>
-        <button class="what" data-piece="${pi}" aria-label="Open ${esc(piece().name)}"><b>${esc(piece().name)}</b><span><span id="barclk">${fmt(audio.currentTime)}</span> · <span id="barsec">${esc(modeLabel())}</span></span></button>
+        <button class="what" data-act="goto" aria-label="Show ${esc(piece().name)}"><b>${esc(piece().name)}</b><span><span id="barclk">${fmt(audio.currentTime)}</span> · <span id="barsec">${esc(modeLabel())}</span></span></button>
         ${o ? `<button class="sw" data-mode="${o.m}" aria-label="Switch to ${esc(o.label)}">⇄ ${esc(o.label)}</button>` : ""}
       </div>
       <div class="seek"><input type="range" id="mscrub" min="0" max="${audio.duration || 1}" step="0.5" value="${audio.currentTime || 0}" aria-label="Position in the track"></div>`;
   }
+  // Which kind of track to use for piece pc, given what the singer has chosen.
+  function modeFor(pc, want) {
+    const has = m => track(pc, m).length;
+    if (want === "rec") return pc.recording ? "rec" : "part";
+    if (want === "part2" && pc.tracks["Tenor 2"]) return "part2";
+    return part && pc.tracks[part] ? "part" : (pc.recording ? "rec" : "part");
+  }
   // Open piece n. Keeps listening to the same kind of track (your part or the full choir).
   function openPiece(n, play) {
-    const want = mode;
     audio.pause(); audio.dataset.id = ""; pi = n; fi = 0; loop = null; err = "";
-    const pc = P.pieces[n], has = m => track(pc, m).length;
-    mode = want === "rec" && has("rec") ? "rec" : (part && pc.tracks[part] ? "part" : (has("rec") ? "rec" : "part"));
-    if (view === "piece") renderPiece();
+    mode = modeFor(P.pieces[n], mode);
+    renderList();
     load(0, 0, play);
+  }
+  function chooseMode(m) {
+    store.set("ncc-mode", m === "rec" ? "rec" : "part");
+    if (pi < 0) { mode = m; render(); return; }
+    setMode(modeFor(piece(), m));
+    $("#app .tabs") && document.querySelectorAll("#app .tabs .tab").forEach(t => t.setAttribute("aria-selected", String((t.dataset.mode === "rec") === (mode === "rec"))));
+    renderList(); renderBar();
+  }
+  function choosePart(p) {
+    const first = !part;
+    part = p; store.set("ncc-part", part);
+    if (first) { mode = "part"; store.set("ncc-mode", "part"); }
+    if (pi >= 0) {
+      const was = !audio.paused, s = sectionAt(piece(), mode, fi, audio.currentTime || 0);
+      audio.pause(); audio.dataset.id = ""; loop = null;
+      mode = modeFor(piece(), mode === "rec" ? "rec" : "part");
+      render();
+      const st = s && startOf(piece(), s, mode);
+      load(st ? st.f : 0, st ? st.t : 0, was);
+    } else render();
   }
   // ⏮: one tap restarts the track (or movement); a second tap within 1.5 s, or a tap in the first 3 s, goes to the previous piece.
   let lastPrev = 0;
@@ -387,28 +440,24 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
     if (pi > 0) openPiece(pi - 1, !audio.paused); else { audio.currentTime = 0; tick(); }
   }
   function nextPress() { if (pi < P.pieces.length - 1) openPiece(pi + 1, !audio.paused); }
-  function show(v) { view = v; if (v === "picker") renderPicker(); else if (v === "home") renderHome(); else renderPiece(); renderBar(); window.scrollTo(0, 0); }
 
   /* ----- events ----- */
   document.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
-    if (b.dataset.part != null) { part = b.dataset.part || ""; store.set("ncc-part", part); if (pi >= 0) { audio.pause(); audio.removeAttribute("src"); audio.dataset.id = ""; pi = -1; } show("home"); return; }
     if (b.dataset.piece != null) {
       const n = +b.dataset.piece;
-      if (n !== pi) { audio.pause(); audio.dataset.id = ""; pi = n; mode = part && P.pieces[n].tracks[part] ? "part" : (P.pieces[n].recording ? "rec" : "part"); fi = 0; loop = null; err = ""; }
-      show("piece");
-      if (!audio.dataset.id) load(0, 0, false);
+      if (n === pi) { if (!audio.dataset.id) load(fi, 0, true); else if (audio.paused) audio.play().catch(() => {}); else audio.pause(); }
+      else openPiece(n, true);
       return;
     }
-    if (b.dataset.mode) { setMode(b.dataset.mode); renderSecs(); renderBar(); return; }
+    if (b.dataset.mode) { chooseMode(b.dataset.mode); return; }
     if (b.dataset.i != null) { jump(piece().sections[+b.dataset.i]); return; }
     switch (b.dataset.act) {
-      case "change": show("picker"); break;
       case "prev": prevPress(); break;
       case "next": nextPress(); break;
+      case "goto": { const o = $("#open"); if (o) o.closest("li").scrollIntoView({ behavior: "smooth", block: "start" }); break; }
       case "save": saveAll(); break;
       case "unsave": unsaveAll(); break;
-      case "home": show("home"); break;
       case "play": if (!audio.dataset.id) load(fi, 0, true); else if (audio.paused) audio.play().catch(() => {}); else audio.pause(); break;
       case "back": audio.currentTime = Math.max(0, audio.currentTime - 10); break;
       case "fwd": audio.currentTime = Math.min(audio.duration || 1e9, audio.currentTime + 10); break;
@@ -420,8 +469,9 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
       }
     }
   });
-  document.addEventListener("input", e => { if (e.target.id === "scrub" || e.target.id === "mscrub") { audio.currentTime = +e.target.value; tick(); } });
+  document.addEventListener("input", e => { if (e.target.id === "mscrub") { audio.currentTime = +e.target.value; tick(); } });
   document.addEventListener("change", e => {
+    if (e.target.id === "partSel") { choosePart(e.target.value); return; }
     if (e.target.id === "speed") { speed = +e.target.value; audio.playbackRate = speed; }
     if (e.target.id === "mvt") { loop = null; load(+e.target.value, 0, !audio.paused); }
   });
@@ -429,7 +479,9 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
   if (canSave) { try { navigator.serviceWorker.register("sw.js").catch(() => {}); } catch (e) {} }
   fetch("program.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
     P = d; document.title = P.title || "Choir Practice";
-    show(part == null ? "picker" : "home");
+    if (part && !P.parts.includes(part)) part = null;
+    mode = part ? (store.get("ncc-mode") === "rec" ? "rec" : "part") : "rec";
+    render();
     refreshSaved();
   }).catch(() => { $("#app").innerHTML = `<p class="msg">The program didn't load. Check your internet connection and reload the page.</p>`; });
 })();
