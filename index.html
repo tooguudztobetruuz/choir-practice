@@ -412,16 +412,13 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
     load(0, 0, play);
   }
   function chooseMode(m) {
-    store.set("ncc-mode", m === "rec" ? "rec" : "part");
     if (pi < 0) { mode = m; render(); return; }
     setMode(modeFor(piece(), m));
     $("#app .tabs") && document.querySelectorAll("#app .tabs .tab").forEach(t => t.setAttribute("aria-selected", String((t.dataset.mode === "rec") === (mode === "rec"))));
     renderList(); renderBar();
   }
   function choosePart(p) {
-    const first = !part;
     part = p; store.set("ncc-part", part);
-    if (first) { mode = "part"; store.set("ncc-mode", "part"); }
     if (pi >= 0) {
       const was = !audio.paused, s = sectionAt(piece(), mode, fi, audio.currentTime || 0);
       audio.pause(); audio.dataset.id = ""; loop = null;
@@ -480,7 +477,7 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
   fetch("program.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
     P = d; document.title = P.title || "Choir Practice";
     if (part && !P.parts.includes(part)) part = null;
-    mode = part ? (store.get("ncc-mode") === "rec" ? "rec" : "part") : "rec";
+    mode = "rec";   // always open on the full choir
     render();
     refreshSaved();
   }).catch(() => { $("#app").innerHTML = `<p class="msg">The program didn't load. Check your internet connection and reload the page.</p>`; });
