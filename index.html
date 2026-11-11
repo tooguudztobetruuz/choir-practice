@@ -44,7 +44,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
 .switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
 .seg{border:0;border-radius:12px;background:transparent;min-height:50px;padding:8px 10px;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px}
 .seg[aria-pressed="true"]{background:var(--c);color:var(--on)}
-.seg .car{font-size:.8em;opacity:.8}
+.seg .car{flex:none;opacity:.75;margin-top:1px}
 .seg.ask{color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
 
 /* Bottom sheet for choosing a part */
@@ -368,7 +368,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     $("#app").innerHTML = `<header><p class="eyebrow">${esc(P.org)}</p><h1>${esc(P.title)}</h1>${P.sub ? `<p class="sub">${esc(P.sub)}</p>` : ""}</header>
       <div class="switch" role="group" aria-label="What to play">
         <button class="seg c-rec" data-act="seg-rec" aria-pressed="${!partOn}">Full choir</button>
-        <button class="seg c-part${hasPart ? "" : " ask"}" data-act="seg-part" aria-pressed="${partOn && hasPart}" aria-haspopup="dialog">${esc(hasPart ? part : "My part")} <span class="car" aria-hidden="true">▾</span></button>
+        <button class="seg c-part${hasPart ? "" : " ask"}" data-act="seg-part" aria-pressed="${partOn && hasPart}" aria-haspopup="dialog">${esc(hasPart ? part : "My part")} <svg class="car" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
       <ol class="pl" id="pl" aria-label="Pieces"></ol>
       <dialog class="sheet" id="offsheet" aria-label="Save for offline"><p class="hd">Practice without internet</p><div class="body"></div></dialog>
@@ -589,14 +589,20 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
         ((groups[norm(pc.name)] = groups[norm(pc.name)] || { pc, voices: {} }).voices[n.voice] = groups[norm(pc.name)].voices[n.voice] || []).push(file(f));
       });
       Object.values(groups).forEach(({ pc, voices }) => {
-        // The part's own line first (same name as the folder, else the "1" line, else the first);
-        // any other line in the folder (Tenor 2 beside Tenor 1) becomes a second choice.
-        const names = Object.keys(voices).sort((a, b) => voiceRank(a) - voiceRank(b));
-        const main = names.find(v => norm(v) === norm(dir.name)) || names.find(v => /\b1$/.test(v)) || names[0];
-        const sortF = l => l.sort((a, b) => a.mvt - b.mvt);
-        pc.tracks[dir.name] = sortF(voices[main]);
-        const rest = names.filter(v => v !== main);
-        if (rest.length) { pc.mainVoice[dir.name] = main; pc.alt[dir.name] = rest.map(v => ({ label: v, files: sortF(voices[v]) })); }
+        // Per movement, the part's own line: same name as the folder, else the highest-ranked voice
+        // ("Alto" in one movement and "Alto 1" in another are the same singer's line).
+        // A second voice in the same movement (Tenor 2 beside Tenor 1) becomes a second choice.
+        const byMvt = {};
+        Object.entries(voices).forEach(([v, files]) => files.forEach(f => { (byMvt[f.mvt] = byMvt[f.mvt] || []).push({ v, f }); }));
+        const main = [], extra = {};
+        Object.keys(byMvt).map(Number).sort((a, b) => a - b).forEach(m => {
+          const c = byMvt[m].sort((a, b) => (norm(b.v) === norm(dir.name)) - (norm(a.v) === norm(dir.name)) || voiceRank(a.v) - voiceRank(b.v));
+          main.push(c[0]);
+          c.slice(1).forEach(x => { (extra[x.v] = extra[x.v] || []).push(x.f); });
+        });
+        pc.tracks[dir.name] = main.map(x => x.f);
+        const rest = Object.keys(extra);
+        if (rest.length) { pc.mainVoice[dir.name] = main[0].v; pc.alt[dir.name] = rest.sort((a, b) => voiceRank(a) - voiceRank(b)).map(v => ({ label: v, files: extra[v].sort((a, b) => a.mvt - b.mvt) })); }
       });
     });
     const order = meta.pieces ? meta.pieces.map(m => norm(m.name)) : [];
