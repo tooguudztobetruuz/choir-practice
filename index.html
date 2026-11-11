@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Choir Practice</title>
+<meta name="description" content="Practice tracks for the Northland Community Choir.">
+<meta name="theme-color" content="#1f5c45">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,600&display=swap">
+<style>
+:root{
+  --bg:#f6f4ef; --surface:#ffffff; --ink:#1b1f1d; --muted:#555f5a; --line:#d8ddd9;
+  --accent:#1f5c45; --accent-soft:#e2efe8; --rec:#6a3f8f; --rec-soft:#efe7f6; --on:#ffffff; --warn:#8a3b12;
+  --f-body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-head:"Fraunces", Georgia, serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#111513; --surface:#1a201d; --ink:#eef2ef; --muted:#a7b3ad; --line:#2d3732;
+  --accent:#7fd3a8; --accent-soft:#1d3329; --rec:#c9a6ec; --rec-soft:#2b2236; --on:#111513; --warn:#f2a679 } }
+:root[data-theme="dark"]{
+  --bg:#111513; --surface:#1a201d; --ink:#eef2ef; --muted:#a7b3ad; --line:#2d3732;
+  --accent:#7fd3a8; --accent-soft:#1d3329; --rec:#c9a6ec; --rec-soft:#2b2236; --on:#111513; --warn:#f2a679 }
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:19px/1.5 var(--f-body);
+  padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 120px max(16px,env(safe-area-inset-left))}
+main{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1{font:600 2rem/1.15 var(--f-head);margin:0;text-wrap:balance}
+h2{font:600 1.5rem/1.2 var(--f-head);margin:0;text-wrap:balance}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.muted{color:var(--muted)}
+.eyebrow{font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.big{display:block;width:100%;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:16px 18px;min-height:64px}
+.big b{display:block;font-size:1.15rem}
+.big span{color:var(--muted);font-size:.95rem}
+.big[aria-current="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid .big{text-align:center;font-weight:700}
+.link{background:none;border:0;padding:8px 0;color:var(--accent);text-decoration:underline;font-weight:700}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.tabs{display:flex;gap:6px;background:var(--bg);border-radius:14px;padding:5px}
+.tab{flex:1;border:0;background:transparent;border-radius:10px;padding:12px 8px;font-weight:700;color:var(--muted);min-height:52px}
+.tab[aria-selected="true"]{background:var(--c);color:var(--on)}
+.c-part{--c:var(--accent);--cs:var(--accent-soft)} .c-rec{--c:var(--rec);--cs:var(--rec-soft)}
+.clock{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.clock .t{font-size:2.4rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.clock .d{color:var(--muted);font-variant-numeric:tabular-nums}
+.now{font-weight:700;color:var(--c)}
+input[type=range]{width:100%;height:36px;accent-color:var(--c)}
+.transport{display:flex;align-items:center;justify-content:center;gap:16px}
+.round{width:60px;height:60px;border-radius:999px;border:2px solid var(--line);background:var(--surface);font-weight:700}
+.play{width:88px;height:88px;border-radius:999px;border:0;background:var(--c);color:var(--on);font-size:2rem}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.tool{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:12px;font-weight:700;min-height:56px}
+.tool[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:var(--on)}
+.secs{display:flex;flex-direction:column}
+.sec{display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:left;border:0;border-top:1px solid var(--line);background:none;padding:14px 8px;min-height:56px;width:100%}
+.sec:first-child{border-top:0}
+.sec .tm{font-variant-numeric:tabular-nums;color:var(--c);font-weight:700;flex:none}
+.sec.on{background:var(--cs);border-radius:12px}
+.sec:disabled{color:var(--muted);cursor:default}
+.sec:disabled .tm{color:var(--muted);font-weight:400;font-size:.9rem}
+.msg{border-left:4px solid var(--warn);padding:8px 12px;background:var(--surface);border-radius:8px}
+select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:2px solid var(--line);
+  padding:10px max(16px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.bar .in{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.bar .what{flex:1;min-width:0}
+.bar .what b,.bar .what span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .what span{color:var(--muted);font-size:.9rem}
+.bar .play{width:60px;height:60px;font-size:1.4rem}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main id="app"><p>Loading…</p></main>
+<div class="bar c-part" id="bar" hidden></div>
+<script src="config.js"></script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+  const KEY = window.CHOIR_KEY || "";
+  const src = id => `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(id)}?alt=media&key=${encodeURIComponent(KEY)}`;
+
+  let P = null, part = store.get("ncc-part"), view = "home", pi = -1, mode = "part", fi = 0, loop = null, speed = 1, err = "";
+  const audio = new Audio(); audio.preload = "metadata";
+
+  function fmt(t) { if (t == null || !isFinite(t)) return "–:––"; t = Math.max(0, t); const m = Math.floor(t / 60), s = Math.floor(t % 60); return m + ":" + (s < 10 ? "0" : "") + s; }
+  const piece = () => P.pieces[pi];
+
+  /* ----- tracks: a list of files (one, or one per movement) ----- */
+  function partTrackName(pc) { return pc.tracks[part] ? part : (pc.tracks["Balanced Voices"] ? "Balanced Voices" : Object.keys(pc.tracks)[0]); }
+  function track(pc, m) {
+    if (m === "rec") return pc.recording ? [{ id: pc.recording.id, mvt: 0, offset: 0 }] : [];
+    if (m === "part2") return pc.tracks["Tenor 2"] || [];
+    return pc.tracks[partTrackName(pc)] || [];
+  }
+  function modes(pc) {
+    const out = [{ m: "part", label: part && pc.tracks[part] ? (part === "Tenor" && pc.tracks["Tenor 2"] ? "Tenor 1" : part) : "Practice track" }];
+    if (part === "Tenor" && pc.tracks["Tenor 2"]) out.push({ m: "part2", label: "Tenor 2" });
+    if (pc.recording) out.push({ m: "rec", label: "Full choir" });
+    return out;
+  }
+  // Where section `s` starts on track mode `m`: {f: file index, t: seconds} or null.
+  function startOf(pc, s, m) {
+    if (m === "rec") return s.rec != null ? { f: 0, t: s.rec } : null;
+    if (s.part == null) return null;
+    const files = track(pc, m), f = files.findIndex(x => x.mvt === (s.mvt || 0));
+    if (f < 0) return null;
+    return { f, t: Math.max(0, s.part + (files[f].offset || 0)) };
+  }
+  function sectionAt(pc, m, f, t) {
+    let best = null, bt = -1;
+    pc.sections.forEach(s => { const st = startOf(pc, s, m); if (st && st.f === f && st.t <= t + 0.05 && st.t >= bt) { best = s; bt = st.t; } });
+    return best;
+  }
+  function sectionEnd(pc, m, s) {
+    const a = startOf(pc, s, m); let end = null;
+    pc.sections.forEach(x => { const st = startOf(pc, x, m); if (x !== s && st && st.f === a.f && st.t > a.t + 0.05 && (end == null || st.t < end)) end = st.t; });
+    return { f: a.f, a: a.t, b: end };
+  }
+
+  /* ----- playback ----- */
+  function load(f, at, play) {
+    const files = track(piece(), mode); if (!files[f]) return;
+    const id = files[f].id;
+    fi = f; err = "";
+    if (audio.dataset.id !== id) { audio.dataset.id = id; audio.src = src(id); }
+    audio.playbackRate = speed;
+    const go = () => { if (at != null) audio.currentTime = at; if (play) audio.play().catch(() => {}); };
+    if (audio.readyState >= 1) go(); else audio.addEventListener("loadedmetadata", go, { once: true });
+    renderPlayer(); renderBar();
+  }
+  function setMode(m) {
+    if (m === mode) return;
+    const pc = piece(), was = !audio.paused, cur = sectionAt(pc, mode, fi, audio.currentTime || 0);
+    let target = cur && startOf(pc, cur, m);
+    if (!target) {
+      // nearest earlier section that has a start on both tracks
+      const here = audio.currentTime || 0;
+      const cands = pc.sections.map(s => [startOf(pc, s, mode), startOf(pc, s, m)]).filter(([a, b]) => a && b && a.f === fi && a.t <= here + 0.05);
+      const last = cands.sort((x, y) => x[0].t - y[0].t).pop();
+      target = last ? last[1] : { f: m === "rec" ? 0 : Math.min(fi, Math.max(0, track(pc, m).length - 1)), t: 0 };
+    }
+    if (loop) { const ls = pc.sections.find(s => s === loop.sec); loop = ls && startOf(pc, ls, m) ? { sec: ls, ...sectionEnd(pc, m, ls) } : null; }
+    audio.pause(); mode = m; audio.dataset.id = "";
+    load(target.f, target.t, was);
+  }
+  function jump(s) {
+    const st = startOf(piece(), s, mode); if (!st) return;
+    if (loop) loop = { sec: s, ...sectionEnd(piece(), mode, s) };
+    load(st.f, st.t, true);
+  }
+  audio.addEventListener("timeupdate", () => {
+    if (loop && fi === loop.f && loop.b != null && audio.currentTime >= loop.b - 0.05) audio.currentTime = loop.a;
+    tick();
+  });
+  audio.addEventListener("ended", () => {
+    if (loop && fi === loop.f) { audio.currentTime = loop.a; audio.play().catch(() => {}); return; }
+    const files = track(piece(), mode);
+    if (fi < files.length - 1) load(fi + 1, 0, true);
+  });
+  ["play", "pause"].forEach(e => audio.addEventListener(e, () => { renderPlayer(); renderBar(); media(); }));
+  audio.addEventListener("loadedmetadata", tick);
+  audio.addEventListener("error", () => {
+    if (!audio.dataset.id) return;
+    err = KEY ? "This track didn't load. Check your internet connection and try again." : "This page isn't finished being set up yet (no Google key).";
+    renderPlayer();
+  });
+  function tick() {
+    if (view !== "piece") return;
+    const pc = piece(), t = audio.currentTime || 0, s = sectionAt(pc, mode, fi, t);
+    const c = $("#clk"); if (c) c.textContent = fmt(t);
+    const d = $("#dur"); if (d) d.textContent = audio.duration ? "of " + fmt(audio.duration) : "";
+    const n = $("#now"); if (n) n.textContent = s ? s.name : "";
+    const r = $("#scrub"); if (r && audio.duration && document.activeElement !== r) { r.max = audio.duration; r.value = t; }
+    document.querySelectorAll(".sec[data-i]").forEach(b => b.classList.toggle("on", !!s && pc.sections[+b.dataset.i] === s));
+    const pb = $("#pitch"); if (pb) { const ps = s && s.pitch ? s : null; pb.hidden = !ps; if (ps) { pb.textContent = "♪ " + ps.pitch; pb.dataset.p = ps.pitch; } }
+    const bs = $("#barsec"); if (bs) bs.textContent = (s ? s.name : modeLabel());
+  }
+  function modeLabel() { const m = modes(piece()).find(x => x.m === mode); return m ? m.label : ""; }
+  function media() {
+    try {
+      const ms = navigator.mediaSession; if (!ms || !piece() || typeof MediaMetadata === "undefined") return;
+      ms.metadata = new MediaMetadata({ title: piece().name, artist: modeLabel(), album: P.title });
+      ms.setActionHandler("play", () => audio.play().catch(() => {}));
+      ms.setActionHandler("pause", () => audio.pause());
+      ms.setActionHandler("seekbackward", () => { audio.currentTime = Math.max(0, audio.currentTime - 10); });
+      ms.setActionHandler("seekforward", () => { audio.currentTime += 10; });
+    } catch (e) {}
+  }
+
+  /* ----- starting note ----- */
+  let actx = null;
+  function playNote(n) {
+    const m = String(n || "").trim().match(/^([A-Ga-g])\s*([#♯b♭]?)\s*(-?\d)?$/); if (!m) return;
+    const acc = /[#♯]/.test(m[2]) ? 1 : /[b♭]/.test(m[2]) ? -1 : 0, oct = m[3] != null ? +m[3] : 4;
+    const midi = (oct + 1) * 12 + { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 }[m[1].toLowerCase()] + acc, f = 440 * Math.pow(2, (midi - 69) / 12);
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume();
+      const t0 = actx.currentTime + 0.01, g = actx.createGain();
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.4, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 2.2); g.connect(actx.destination);
+      [[1, "triangle", 1], [2, "sine", 0.2]].forEach(([k, type, v]) => { const o = actx.createOscillator(), og = actx.createGain(); o.type = type; o.frequency.value = f * k; og.gain.value = v; o.connect(og); og.connect(g); o.start(t0); o.stop(t0 + 2.3); });
+    } catch (e) {}
+  }
+
+  /* ----- screens ----- */
+  function header() {
+    return `<header><p class="eyebrow">${esc(P.org)}</p><h1>${esc(P.title)}</h1>${P.sub ? `<p class="muted">${esc(P.sub)}</p>` : ""}</header>`;
+  }
+  function renderPicker() {
+    $("#app").innerHTML = `${header()}
+      <h2>Which part do you sing?</h2>
+      <div class="grid">${P.parts.map(x => `<button class="big" data-part="${esc(x)}" aria-current="${x === part}">${esc(x)}</button>`).join("")}</div>
+      <button class="big" data-part="" style="text-align:center"><b>I'm not sure / just listen</b><span>Plays the full choir</span></button>
+      <p class="muted">You can change this later.</p>`;
+  }
+  function renderHome() {
+    $("#app").innerHTML = `${header()}
+      <p>Your part: <b>${esc(part || "Just listening")}</b> <button class="link" data-act="change">Change</button></p>
+      <h2>Pieces</h2>
+      ${P.pieces.map((pc, i) => `<button class="big" data-piece="${i}"><b>${i + 1}. ${esc(pc.name)}</b><span>${esc(pc.composer || "")}</span></button>`).join("")}`;
+  }
+  function renderPiece() {
+    const pc = piece();
+    $("#app").innerHTML = `<button class="link" data-act="home">‹ All pieces</button>
+      <header><p class="eyebrow">Piece ${pi + 1} of ${P.pieces.length}</p><h1>${esc(pc.name)}</h1><p class="muted">${esc(pc.composer || "")}</p></header>
+      <section class="card" id="player" aria-label="Player"></section>
+      <section class="card" aria-label="Sections"><h2>Sections</h2><div class="secs" id="secs"></div>
+        <p class="muted" style="font-size:.9rem">Tap a section to play from there.</p></section>
+      ${pc.score ? `<a class="big" style="text-align:center;text-decoration:none;color:inherit" target="_blank" rel="noopener" href="https://drive.google.com/file/d/${esc(pc.score.id)}/view"><b>Open the score ↗</b></a>` : ""}`;
+    renderPlayer(); renderSecs();
+  }
+  function renderPlayer() {
+    const el = $("#player"); if (!el || view !== "piece") return;
+    const pc = piece(), files = track(pc, mode), playing = !audio.paused;
+    el.className = "card " + (mode === "rec" ? "c-rec" : "c-part");
+    const ms = modes(pc);
+    el.innerHTML = `${ms.length > 1 ? `<div class="tabs" role="tablist" aria-label="Which track">${ms.map(x => `<button class="tab ${x.m === "rec" ? "c-rec" : "c-part"}" role="tab" data-mode="${x.m}" aria-selected="${x.m === mode}">${esc(x.label)}</button>`).join("")}</div>` : ""}
+      ${pc.movements && files.length > 1 ? `<label class="row">Movement <select id="mvt" aria-label="Movement">${files.map((f, i) => `<option value="${i}" ${i === fi ? "selected" : ""}>${esc(pc.movements[f.mvt] || "Movement " + (i + 1))}</option>`).join("")}</select></label>` : ""}
+      <div class="clock"><span class="t" id="clk">${fmt(audio.currentTime)}</span><span class="d" id="dur"></span></div>
+      <p class="now" id="now"></p>
+      <input type="range" id="scrub" min="0" max="${audio.duration || 1}" step="0.5" value="${audio.currentTime || 0}" aria-label="Position in the track">
+      <div class="transport">
+        <button class="round" data-act="back" aria-label="Back 10 seconds">−10</button>
+        <button class="play" data-act="play" aria-label="${playing ? "Pause" : "Play"}">${playing ? "❚❚" : "▶"}</button>
+        <button class="round" data-act="fwd" aria-label="Forward 10 seconds">+10</button>
+      </div>
+      <div class="tools">
+        <button class="tool" data-act="loop" aria-pressed="${!!loop}">⟲ ${loop ? "Looping" : "Repeat section"}</button>
+        <button class="tool" id="pitch" data-act="pitch" hidden></button>
+        <label class="tool row" style="justify-content:center;gap:6px">Speed <select id="speed" aria-label="Speed">${[0.75, 0.85, 1, 1.1].map(v => `<option value="${v}" ${v === speed ? "selected" : ""}>${v === 1 ? "Normal" : v + "×"}</option>`).join("")}</select></label>
+      </div>
+      ${err ? `<p class="msg">${esc(err)}</p>` : ""}`;
+    tick();
+  }
+  function renderSecs() {
+    const el = $("#secs"); if (!el) return;
+    const pc = piece();
+    el.innerHTML = pc.sections.map((s, i) => { const st = startOf(pc, s, mode);
+      return `<button class="sec" data-i="${i}" ${st ? "" : "disabled"}><span>${esc(s.name)}</span><span class="tm">${st ? fmt(st.t) : "not set yet"}</span></button>`; }).join("")
+      || `<p class="muted">No sections yet.</p>`;
+    tick();
+  }
+  function renderBar() {
+    const b = $("#bar");
+    if (view !== "home" || !audio.dataset.id || pi < 0) { b.hidden = true; return; }
+    b.hidden = false; b.className = "bar " + (mode === "rec" ? "c-rec" : "c-part");
+    b.innerHTML = `<div class="in"><button class="play" data-act="play" aria-label="${audio.paused ? "Play" : "Pause"}">${audio.paused ? "▶" : "❚❚"}</button>
+      <button class="what" data-piece="${pi}" style="text-align:left;background:none;border:0;padding:0"><b>${esc(piece().name)}</b><span id="barsec">${esc(modeLabel())}</span></button></div>`;
+  }
+  function show(v) { view = v; if (v === "picker") renderPicker(); else if (v === "home") renderHome(); else renderPiece(); renderBar(); window.scrollTo(0, 0); }
+
+  /* ----- events ----- */
+  document.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.part != null) { part = b.dataset.part || ""; store.set("ncc-part", part); if (pi >= 0) { audio.pause(); audio.removeAttribute("src"); audio.dataset.id = ""; pi = -1; } show("home"); return; }
+    if (b.dataset.piece != null) {
+      const n = +b.dataset.piece;
+      if (n !== pi) { audio.pause(); audio.dataset.id = ""; pi = n; mode = part && P.pieces[n].tracks[part] ? "part" : (P.pieces[n].recording ? "rec" : "part"); fi = 0; loop = null; err = ""; }
+      show("piece");
+      if (!audio.dataset.id) load(0, 0, false);
+      return;
+    }
+    if (b.dataset.mode) { setMode(b.dataset.mode); renderSecs(); return; }
+    if (b.dataset.i != null) { jump(piece().sections[+b.dataset.i]); return; }
+    switch (b.dataset.act) {
+      case "change": show("picker"); break;
+      case "home": show("home"); break;
+      case "play": if (!audio.dataset.id) load(fi, 0, true); else if (audio.paused) audio.play().catch(() => {}); else audio.pause(); break;
+      case "back": audio.currentTime = Math.max(0, audio.currentTime - 10); break;
+      case "fwd": audio.currentTime = Math.min(audio.duration || 1e9, audio.currentTime + 10); break;
+      case "pitch": playNote(b.dataset.p); break;
+      case "loop": {
+        if (loop) loop = null;
+        else { const s = sectionAt(piece(), mode, fi, audio.currentTime || 0); if (s) loop = { sec: s, ...sectionEnd(piece(), mode, s) }; }
+        renderPlayer(); break;
+      }
+    }
+  });
+  document.addEventListener("input", e => { if (e.target.id === "scrub") { audio.currentTime = +e.target.value; tick(); } });
+  document.addEventListener("change", e => {
+    if (e.target.id === "speed") { speed = +e.target.value; audio.playbackRate = speed; }
+    if (e.target.id === "mvt") { loop = null; load(+e.target.value, 0, !audio.paused); }
+  });
+
+  fetch("program.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
+    P = d; document.title = P.title || "Choir Practice";
+    show(part == null ? "picker" : "home");
+  }).catch(() => { $("#app").innerHTML = `<p class="msg">The program didn't load. Check your internet connection and reload the page.</p>`; });
+})();
+</script>
+</body>
+</html>
