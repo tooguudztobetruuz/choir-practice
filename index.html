@@ -106,9 +106,9 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
 .bar .what{flex:1;min-width:0;text-align:left;background:none;border:0;padding:2px 0}
 .bar .what:disabled{opacity:1}
 .bar .what b{font-size:1rem;margin-right:6px}
-.bar .badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--c);vertical-align:2px;white-space:nowrap}
+.bar .what b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .trk{color:var(--muted);font-weight:400}
 .bar .secl{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:700;color:var(--c);font-size:.92rem;line-height:1.3;margin-top:2px}
-.bar .secl:empty{display:none}
 .bar .sw{flex:none;max-width:42%;min-height:40px;border-radius:999px;border:1px solid var(--o);background:var(--os);color:var(--o);font-weight:700;font-size:.85rem;padding:0 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bar .seek{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-top:4px;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .bar .seek input{width:100%;height:28px;margin:0;accent-color:var(--c)}
@@ -245,7 +245,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     const r = $("#scrub"); if (r && audio.duration && document.activeElement !== r) { r.max = audio.duration; r.value = t; }
     document.querySelectorAll(".sec[data-i]").forEach(b => b.classList.toggle("on", !!s && pc.sections[+b.dataset.i] === s));
     const pb = $("#pitch"); if (pb) { const ps = s && s.pitch ? s : null; pb.hidden = !ps; if (ps) { pb.textContent = "♪ " + ps.pitch; pb.dataset.p = ps.pitch; } }
-    const bs = $("#barsec"); if (bs) bs.textContent = s ? s.name : "";
+    const bs = $("#barsec"); if (bs) bs.textContent = s ? " · " + s.name : "";
     const tc = $("#tcur"); if (tc) tc.textContent = fmt(t);
     const td = $("#tdur"); if (td) td.textContent = audio.duration ? fmt(audio.duration) : "–:––";
     const pf = $("#progfill"); if (pf) {
@@ -403,7 +403,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
         ${two ? `<button class="chip" data-mode="part" aria-pressed="${mode === "part"}">${esc(mainVoice(pc))}</button><button class="chip" data-mode="part2" aria-pressed="${mode === "part2"}">${esc(alt.label)}</button>` : ""}
         ${pc.movements && files.length > 1 ? `<label class="chip">Movement <select id="mvt" aria-label="Movement">${files.map((f, i) => `<option value="${i}" ${i === fi ? "selected" : ""}>${esc(pc.movements[f.mvt] || "Movement " + (i + 1))}</option>`).join("")}</select></label>` : ""}
         <button class="chip" id="pitch" data-act="pitch" hidden></button>
-        <label class="chip">Speed <select id="speed" aria-label="Speed">${[0.75, 0.85, 1, 1.1].map(v => `<option value="${v}" ${v === speed ? "selected" : ""}>${v === 1 ? "Normal" : v + "×"}</option>`).join("")}</select></label>
+        <label class="chip">Speed <select id="speed" aria-label="Speed">${[0.75, 0.85, 1, 1.1].map(v => `<option value="${v}" ${v === speed ? "selected" : ""}>${v}×</option>`).join("")}</select></label>
         ${pc.score ? `<a class="chip" target="_blank" rel="noopener" href="https://drive.google.com/file/d/${esc(pc.score.id)}/view">Score ↗</a>` : ""}
       </div>
       <div class="secs" id="secs"></div>
@@ -429,8 +429,8 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     const label = idle ? (mode === "rec" ? "Full choir" : part || "") : modeLabel();
     b.innerHTML = `<div>
         <div class="top">
-          <button class="what" data-act="goto" ${idle ? "disabled" : ""} aria-label="${idle ? "Nothing playing" : "Show " + esc(piece().name)}"><b>${esc(idle ? "Pick a piece" : piece().name)}</b><span class="badge">${esc(label)}</span>
-            <span class="secl" id="barsec"></span></button>
+          <button class="what" data-act="goto" ${idle ? "disabled" : ""} aria-label="${idle ? "Nothing playing" : "Show " + esc(piece().name)}"><b>${esc(idle ? "Pick a piece" : piece().name)}</b>
+            <span class="secl"><span class="trk">${esc(label)}</span><span id="barsec"></span></span></button>
           ${canSave ? `<button class="dl" id="dl" data-act="dl" aria-label="Save for offline">⬇</button>` : ""}
           ${o ? `<button class="sw" data-mode="${o.m}" aria-label="Switch to ${esc(o.label)}">⇄ ${esc(o.label)}</button>` : ""}
         </div>
