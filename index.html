@@ -24,8 +24,8 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:19px/1.5 var(--f-body);
-  padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 120px max(16px,env(safe-area-inset-left))}
-main{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+  padding:0 max(16px,env(safe-area-inset-right)) 64px max(16px,env(safe-area-inset-left))}
+main{max-width:600px;margin:max(16px,env(safe-area-inset-top)) auto 0;display:flex;flex-direction:column;gap:18px}
 h1{font:600 2rem/1.15 var(--f-head);margin:0;text-wrap:balance}
 h2{font:600 1.5rem/1.2 var(--f-head);margin:0;text-wrap:balance}
 p{margin:0}
@@ -61,24 +61,31 @@ input[type=range]{width:100%;height:36px;accent-color:var(--c)}
 .sec{display:flex;justify-content:space-between;gap:12px;align-items:center;text-align:left;border:0;border-top:1px solid var(--line);background:none;padding:14px 8px;min-height:56px;width:100%}
 .sec:first-child{border-top:0}
 .sec .tm{font-variant-numeric:tabular-nums;color:var(--c);font-weight:700;flex:none}
-.sec.on{background:var(--cs);border-radius:12px}
+.sec.on{background:var(--cs);border-radius:12px;box-shadow:inset 5px 0 0 var(--c);font-weight:700}
 .sec:disabled{color:var(--muted);cursor:default}
 .sec:disabled .tm{color:var(--muted);font-weight:400;font-size:.9rem}
 .msg{border-left:4px solid var(--warn);padding:8px 12px;background:var(--surface);border-radius:8px}
 select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
-.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:2px solid var(--line);
-  padding:10px max(16px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
-.bar .in{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:12px}
-.bar .what{flex:1;min-width:0}
-.bar .what b,.bar .what span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bar .what span{color:var(--muted);font-size:.9rem}
-.bar .play{width:60px;height:60px;font-size:1.4rem}
+/* Pinned player: stays at the top while scrolling */
+.bar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:2px solid var(--line);
+  margin:0 calc(-1 * max(16px,env(safe-area-inset-right))) 0 calc(-1 * max(16px,env(safe-area-inset-left)));
+  padding:max(8px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 6px max(16px,env(safe-area-inset-left))}
+.bar .in{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:8px}
+.bar .what{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0 4px}
+.bar .what b,.bar .what>span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .what>span{color:var(--muted);font-size:.85rem;font-variant-numeric:tabular-nums}
+.bar .play{width:52px;height:52px;font-size:1.2rem;flex:none}
+.bar .sk{width:44px;height:44px;border-radius:999px;border:2px solid var(--line);background:var(--surface);flex:none;font-size:1rem}
+.bar .sw{flex:none;max-width:34%;min-height:44px;border-radius:999px;border:2px solid var(--o);background:var(--os);color:var(--o);font-weight:700;font-size:.85rem;padding:0 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .seek{max-width:600px;margin:2px auto 0}
+.bar .seek input{display:block;height:28px}
+.c-part{--o:var(--rec);--os:var(--rec-soft)} .c-rec{--o:var(--accent);--os:var(--accent-soft)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
+<div class="bar c-part" id="bar" role="region" aria-label="Now playing" hidden></div>
 <main id="app"><p>Loading…</p></main>
-<div class="bar c-part" id="bar" hidden></div>
 <script src="config.js"></script>
 <script>
 (() => {
@@ -188,6 +195,8 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
     document.querySelectorAll(".sec[data-i]").forEach(b => b.classList.toggle("on", !!s && pc.sections[+b.dataset.i] === s));
     const pb = $("#pitch"); if (pb) { const ps = s && s.pitch ? s : null; pb.hidden = !ps; if (ps) { pb.textContent = "♪ " + ps.pitch; pb.dataset.p = ps.pitch; } }
     const bs = $("#barsec"); if (bs) bs.textContent = (s ? s.name : modeLabel());
+    const bc = $("#barclk"); if (bc) bc.textContent = fmt(t);
+    const ms = $("#mscrub"); if (ms && audio.duration && document.activeElement !== ms) { ms.max = audio.duration; ms.value = t; }
   }
   function modeLabel() { const m = modes(piece()).find(x => x.m === mode); return m ? m.label : ""; }
   function media() {
@@ -198,6 +207,8 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
       ms.setActionHandler("pause", () => audio.pause());
       ms.setActionHandler("seekbackward", () => { audio.currentTime = Math.max(0, audio.currentTime - 10); });
       ms.setActionHandler("seekforward", () => { audio.currentTime += 10; });
+      ms.setActionHandler("previoustrack", () => prevPress());
+      ms.setActionHandler("nexttrack", () => nextPress());
     } catch (e) {}
   }
 
@@ -336,18 +347,46 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
   function renderSecs() {
     const el = $("#secs"); if (!el) return;
     const pc = piece();
+    el.closest(".card").className = "card " + (mode === "rec" ? "c-rec" : "c-part");
     el.innerHTML = pc.sections.map((s, i) => { const st = startOf(pc, s, mode);
       return `<button class="sec" data-i="${i}" ${st ? "" : "disabled"}><span>${esc(s.name)}</span><span class="tm">${st ? fmt(st.t) : "not set yet"}</span></button>`; }).join("")
       || `<p class="muted">No sections yet.</p>`;
     tick();
   }
+  // The other track the ⇄ button switches to.
+  function otherMode() { const ms = modes(piece()); if (ms.length < 2) return null; return mode === "rec" ? (ms.find(x => x.m === "part") || ms[1]) : ms.find(x => x.m === "rec") || null; }
   function renderBar() {
     const b = $("#bar");
-    if (view !== "home" || !audio.dataset.id || pi < 0) { b.hidden = true; return; }
+    if (view === "picker" || !audio.dataset.id || pi < 0) { b.hidden = true; return; }
+    const o = otherMode();
     b.hidden = false; b.className = "bar " + (mode === "rec" ? "c-rec" : "c-part");
-    b.innerHTML = `<div class="in"><button class="play" data-act="play" aria-label="${audio.paused ? "Play" : "Pause"}">${audio.paused ? "▶" : "❚❚"}</button>
-      <button class="what" data-piece="${pi}" style="text-align:left;background:none;border:0;padding:0"><b>${esc(piece().name)}</b><span id="barsec">${esc(modeLabel())}</span></button></div>`;
+    b.innerHTML = `<div class="in">
+        <button class="sk" data-act="prev" aria-label="Restart, or tap twice for the previous piece">⏮</button>
+        <button class="play" data-act="play" aria-label="${audio.paused ? "Play" : "Pause"}">${audio.paused ? "▶" : "❚❚"}</button>
+        <button class="sk" data-act="next" aria-label="Next piece" ${pi >= P.pieces.length - 1 ? "disabled" : ""}>⏭</button>
+        <button class="what" data-piece="${pi}" aria-label="Open ${esc(piece().name)}"><b>${esc(piece().name)}</b><span><span id="barclk">${fmt(audio.currentTime)}</span> · <span id="barsec">${esc(modeLabel())}</span></span></button>
+        ${o ? `<button class="sw" data-mode="${o.m}" aria-label="Switch to ${esc(o.label)}">⇄ ${esc(o.label)}</button>` : ""}
+      </div>
+      <div class="seek"><input type="range" id="mscrub" min="0" max="${audio.duration || 1}" step="0.5" value="${audio.currentTime || 0}" aria-label="Position in the track"></div>`;
   }
+  // Open piece n. Keeps listening to the same kind of track (your part or the full choir).
+  function openPiece(n, play) {
+    const want = mode;
+    audio.pause(); audio.dataset.id = ""; pi = n; fi = 0; loop = null; err = "";
+    const pc = P.pieces[n], has = m => track(pc, m).length;
+    mode = want === "rec" && has("rec") ? "rec" : (part && pc.tracks[part] ? "part" : (has("rec") ? "rec" : "part"));
+    if (view === "piece") renderPiece();
+    load(0, 0, play);
+  }
+  // ⏮: one tap restarts the track (or movement); a second tap within 1.5 s, or a tap in the first 3 s, goes to the previous piece.
+  let lastPrev = 0;
+  function prevPress() {
+    const now = Date.now(), quick = now - lastPrev < 1500; lastPrev = now;
+    if (!quick && (audio.currentTime || 0) > 3) { audio.currentTime = 0; tick(); return; }
+    lastPrev = 0;
+    if (pi > 0) openPiece(pi - 1, !audio.paused); else { audio.currentTime = 0; tick(); }
+  }
+  function nextPress() { if (pi < P.pieces.length - 1) openPiece(pi + 1, !audio.paused); }
   function show(v) { view = v; if (v === "picker") renderPicker(); else if (v === "home") renderHome(); else renderPiece(); renderBar(); window.scrollTo(0, 0); }
 
   /* ----- events ----- */
@@ -361,10 +400,12 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
       if (!audio.dataset.id) load(0, 0, false);
       return;
     }
-    if (b.dataset.mode) { setMode(b.dataset.mode); renderSecs(); return; }
+    if (b.dataset.mode) { setMode(b.dataset.mode); renderSecs(); renderBar(); return; }
     if (b.dataset.i != null) { jump(piece().sections[+b.dataset.i]); return; }
     switch (b.dataset.act) {
       case "change": show("picker"); break;
+      case "prev": prevPress(); break;
+      case "next": nextPress(); break;
       case "save": saveAll(); break;
       case "unsave": unsaveAll(); break;
       case "home": show("home"); break;
@@ -379,7 +420,7 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
       }
     }
   });
-  document.addEventListener("input", e => { if (e.target.id === "scrub") { audio.currentTime = +e.target.value; tick(); } });
+  document.addEventListener("input", e => { if (e.target.id === "scrub" || e.target.id === "mscrub") { audio.currentTime = +e.target.value; tick(); } });
   document.addEventListener("change", e => {
     if (e.target.id === "speed") { speed = +e.target.value; audio.playbackRate = speed; }
     if (e.target.id === "mvt") { loop = null; load(+e.target.value, 0, !audio.paused); }
