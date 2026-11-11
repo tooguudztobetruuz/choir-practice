@@ -87,7 +87,11 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
   const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
                   set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
   const KEY = window.CHOIR_KEY || "";
-  const src = id => `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(id)}?alt=media&key=${encodeURIComponent(KEY)}`;
+  const API = window.CHOIR_API || "https://www.googleapis.com/drive/v3/files/";
+  const src = id => `${API}${encodeURIComponent(id)}?alt=media&key=${encodeURIComponent(KEY)}`;
+  const AUDIO = "ncc-audio-v1", audioKey = id => "https://ncc-audio.local/" + id;
+  const canSave = "serviceWorker" in navigator && "caches" in window;
+  let saved = new Set(), saving = null, saveMsg = "";
 
   let P = null, part = store.get("ncc-part"), view = "home", pi = -1, mode = "part", fi = 0, loop = null, speed = 1, err = "";
   const audio = new Audio(); audio.preload = "metadata";
@@ -226,7 +230,75 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
     $("#app").innerHTML = `${header()}
       <p>Your part: <b>${esc(part || "Just listening")}</b> <button class="link" data-act="change">Change</button></p>
       <h2>Pieces</h2>
-      ${P.pieces.map((pc, i) => `<button class="big" data-piece="${i}"><b>${i + 1}. ${esc(pc.name)}</b><span>${esc(pc.composer || "")}</span></button>`).join("")}`;
+      ${P.pieces.map((pc, i) => `<button class="big" data-piece="${i}"><b>${i + 1}. ${esc(pc.name)}</b><span>${esc(pc.composer || "")}</span></button>`).join("")}
+      ${canSave ? `<section class="card" id="offline" aria-label="Save for offline"></section>` : ""}`;
+    renderOffline();
+  }
+
+  /* ----- save for offline ----- */
+  // The singer's part tracks (and Tenor 2 for tenors) plus every full choir recording.
+  function wanted() {
+    const out = [];
+    P.pieces.forEach(pc => {
+      if (part && pc.tracks[part]) pc.tracks[part].forEach(f => out.push(f));
+      if (part === "Tenor" && pc.tracks["Tenor 2"]) pc.tracks["Tenor 2"].forEach(f => out.push(f));
+      if (pc.recording) out.push(pc.recording);
+    });
+    const seen = new Set();
+    return out.filter(f => !seen.has(f.id) && seen.add(f.id));
+  }
+  const mb = n => Math.max(1, Math.round(n / 1e6));
+  async function refreshSaved() {
+    if (!canSave) return;
+    try { const keys = await (await caches.open(AUDIO)).keys(); saved = new Set(keys.map(k => k.url.split("/").pop())); } catch (e) { saved = new Set(); }
+    renderOffline();
+  }
+  function renderOffline() {
+    const el = $("#offline"); if (!el) return;
+    const list = wanted(), missing = list.filter(f => !saved.has(f.id)), have = list.length - missing.length;
+    const total = list.reduce((n, f) => n + (f.size || 0), 0), left = missing.reduce((n, f) => n + (f.size || 0), 0);
+    const what = part ? `your ${esc(part)} tracks and the full choir recordings` : "the full choir recordings";
+    let body;
+    if (saving) {
+      body = `<p><b>Saving ${saving.done + 1} of ${saving.total}…</b></p><p class="muted">Keep this page open until it finishes.</p>
+        <progress max="${saving.total}" value="${saving.done}" style="width:100%;height:14px"></progress>`;
+    } else if (!missing.length) {
+      body = `<p><b>✓ Saved on this phone</b></p><p class="muted">Everything plays without internet now.</p>
+        <button class="link" data-act="unsave">Remove saved tracks from this phone</button>`;
+    } else {
+      body = `<p>Save ${what} on this phone so they play without internet. About <b>${mb(have ? left : total)} MB</b>${have ? ` left (${have} of ${list.length} already saved)` : ""}. Best on Wi-Fi at home.</p>
+        <button class="big" data-act="save" style="text-align:center"><b>${have ? "Finish saving" : "Save for offline"}</b></button>
+        ${have ? `<button class="link" data-act="unsave">Remove saved tracks from this phone</button>` : ""}`;
+    }
+    el.innerHTML = `<h2>Practice without internet</h2>${body}${saveMsg ? `<p class="msg">${esc(saveMsg)}</p>` : ""}`;
+  }
+  async function saveAll() {
+    if (saving) return;
+    saveMsg = "";
+    try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) {}
+    const missing = wanted().filter(f => !saved.has(f.id));
+    saving = { done: 0, total: missing.length }; renderOffline();
+    let c;
+    try { c = await caches.open(AUDIO); } catch (e) { saving = null; saveMsg = "This phone's browser can't save tracks."; renderOffline(); return; }
+    for (const f of missing) {
+      try {
+        const r = await fetch(src(f.id), { mode: "cors" });
+        if (!r.ok) throw new Error("status " + r.status);
+        await c.put(audioKey(f.id), new Response(await r.blob(), { headers: { "Content-Type": "audio/mpeg" } }));
+        saved.add(f.id);
+      } catch (e) {
+        saveMsg = e && e.name === "QuotaExceededError"
+          ? "This phone is out of space for saved tracks. Free up some storage and tap Finish saving."
+          : "Saving stopped partway, probably a dropped connection. Tap Finish saving to continue where it left off.";
+        break;
+      }
+      saving.done++; renderOffline();
+    }
+    saving = null; renderOffline();
+  }
+  async function unsaveAll() {
+    try { await caches.delete(AUDIO); } catch (e) {}
+    saved = new Set(); saveMsg = ""; renderOffline();
   }
   function renderPiece() {
     const pc = piece();
@@ -293,6 +365,8 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
     if (b.dataset.i != null) { jump(piece().sections[+b.dataset.i]); return; }
     switch (b.dataset.act) {
       case "change": show("picker"); break;
+      case "save": saveAll(); break;
+      case "unsave": unsaveAll(); break;
       case "home": show("home"); break;
       case "play": if (!audio.dataset.id) load(fi, 0, true); else if (audio.paused) audio.play().catch(() => {}); else audio.pause(); break;
       case "back": audio.currentTime = Math.max(0, audio.currentTime - 10); break;
@@ -311,9 +385,11 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
     if (e.target.id === "mvt") { loop = null; load(+e.target.value, 0, !audio.paused); }
   });
 
+  if (canSave) { try { navigator.serviceWorker.register("sw.js").catch(() => {}); } catch (e) {} }
   fetch("program.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
     P = d; document.title = P.title || "Choir Practice";
     show(part == null ? "picker" : "home");
+    refreshSaved();
   }).catch(() => { $("#app").innerHTML = `<p class="msg">The program didn't load. Check your internet connection and reload the page.</p>`; });
 })();
 </script>

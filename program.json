@@ -17,7 +17,8 @@
    "composer": "Jennifer Lucy Cook",
    "recording": {
     "id": "1DJuHz29upSxauUhWex7QlwZZwFYrD2wN",
-    "dur": 180.21
+    "dur": 180.21,
+    "size": 5454212
    },
    "score": {
     "id": "1t4NVx_FtcDMJghPakoLUFdAHBT80UD5Q"
@@ -30,7 +31,8 @@
       "voice": "Soprano 1",
       "mvt": 0,
       "offset": 0,
-      "dur": 197.43
+      "dur": 197.43,
+      "size": 3224708
      }
     ],
     "Soprano 2": [
@@ -39,7 +41,8 @@
       "voice": "Soprano",
       "mvt": 0,
       "offset": 0,
-      "dur": 197.43
+      "dur": 197.43,
+      "size": 3949964
      }
     ],
     "Alto 1": [
@@ -48,7 +51,8 @@
       "voice": "Alto",
       "mvt": 0,
       "offset": -0.33,
-      "dur": 197.15
+      "dur": 197.15,
+      "size": 3944204
      }
     ],
     "Alto 2": [
@@ -57,7 +61,8 @@
       "voice": "Alto",
       "mvt": 0,
       "offset": -0.33,
-      "dur": 197.15
+      "dur": 197.15,
+      "size": 3944204
      }
     ],
     "Tenor": [
@@ -66,7 +71,8 @@
       "voice": "Tenor",
       "mvt": 0,
       "offset": -0.49,
-      "dur": 197.2
+      "dur": 197.2,
+      "size": 3945164
      }
     ],
     "Bass 1": [
@@ -75,7 +81,8 @@
       "voice": "Bass",
       "mvt": 0,
       "offset": -0.13,
-      "dur": 197.52
+      "dur": 197.52,
+      "size": 3951884
      }
     ],
     "Bass 2": [
@@ -84,7 +91,8 @@
       "voice": "Bass",
       "mvt": 0,
       "offset": -0.13,
-      "dur": 197.52
+      "dur": 197.52,
+      "size": 3951884
      }
     ],
     "Balanced Voices": [
@@ -93,7 +101,8 @@
       "voice": "Balanced Parts",
       "mvt": 0,
       "offset": -0.31,
-      "dur": 196.63
+      "dur": 196.63,
+      "size": 3408548
      }
     ]
    },
@@ -165,7 +174,8 @@
    "composer": "Traditional spiritual, arr. Stacey V. Gibbs",
    "recording": {
     "id": "1VFRdPxins2JJB5RUnL8XLiac5zF5_4dX",
-    "dur": 146.24
+    "dur": 146.24,
+    "size": 4487852
    },
    "score": {
     "id": "1N-AFKWspd257tbaQatRANmy62nIgWB6y"
@@ -178,7 +188,8 @@
       "voice": "Soprano 1",
       "mvt": 0,
       "offset": 0,
-      "dur": 138.48
+      "dur": 138.48,
+      "size": 3936908
      }
     ],
     "Soprano 2": [
@@ -187,7 +198,8 @@
       "voice": "Soprano 2",
       "mvt": 0,
       "offset": 0,
-      "dur": 138.48
+      "dur": 138.48,
+      "size": 2770604
      }
     ],
     "Alto 1": [
@@ -196,7 +208,8 @@
       "voice": "Alto 1",
       "mvt": 0,
       "offset": 0,
-      "dur": 138.48
+      "dur": 138.48,
+      "size": 2770604
      }
     ],
     "Alto 2": [
@@ -205,7 +218,8 @@
       "voice": "Alto 2",
       "mvt": 0,
       "offset": 0,
-      "dur": 138.48
+      "dur": 138.48,
+      "size": 2770604
      }
     ],
     "Tenor": [
@@ -214,7 +228,8 @@
       "voice": "Tenor 1",
       "mvt": 0,
       "offset": 0,
-      "dur": 138.48
+      "dur": 138.48,
+      "size": 2770604
      }
     ],
     "Tenor 2": [
@@ -223,7 +238,8 @@
       "voice": "Tenor 2",
       "mvt": 0,
       "offset": 0,
-      "dur": 138.48
+      "dur": 138.48,
+      "size": 2770604
      }
     ],
     "Bass 1": [
@@ -232,7 +248,8 @@
       "voice": "Bass 1",
       "mvt": 0,
       "offset": 0,
-      "dur": 138.48
+      "dur": 138.48,
+      "size": 2770604
      }
     ],
     "Bass 2": [
@@ -241,7 +258,8 @@
       "voice": "Bass 2",
       "mvt": 0,
       "offset": 0,
-      "dur": 138.48
+      "dur": 138.48,
+      "size": 2770604
      }
     ],
     "Balanced Voices": [
@@ -250,7 +268,8 @@
       "voice": "Balanced Parts",
       "mvt": 0,
       "offset": 0,
-      "dur": 138.48
+      "dur": 138.48,
+      "size": 3857588
      }
     ]
    },
@@ -310,7 +329,8 @@
    "composer": "Mia Makaroff",
    "recording": {
     "id": "1f1IVhp4g2WlRwa7ioSOyISlPtpWkAUsO",
-    "dur": 240.39
+    "dur": 240.39,
+    "size": 7106252
    },
    "score": {
     "id": "1Xnm-leKHle7ZsrRIwwKz81-CNwFWD-ER"
@@ -323,7 +343,8 @@
       "voice": "Soprano 1",
       "mvt": 0,
       "offset": 0,
-      "dur": 245.53
+      "dur": 245.53,
+      "size": 7031012
      }
     ],
     "Soprano 2": [
@@ -332,7 +353,8 @@
       "voice": "Soprano 2",
       "mvt": 0,
       "offset": 8.37,
-      "dur": 233.08
+      "dur": 233.08,
+      "size": 4662764
      }
     ],
     "Alto 1": [
@@ -341,7 +363,8 @@
       "voice": "Alto",
       "mvt": 0,
       "offset": -1.2,
-      "dur": 231.07
+      "dur": 231.07,
+      "size": 4622924
      }
     ],
     "Alto 2": [
@@ -350,7 +373,8 @@
       "voice": "Alto",
       "mvt": 0,
       "offset": -1.2,
-      "dur": 231.07
+      "dur": 231.07,
+      "size": 4622924
      }
     ],
     "Tenor": [
@@ -359,7 +383,8 @@
       "voice": "Tenor",
       "mvt": 0,
       "offset": -0.62,
-      "dur": 242.46
+      "dur": 242.46,
+      "size": 4850444
      }
     ],
     "Bass 1": [
@@ -368,7 +393,8 @@
       "voice": "Bass 1",
       "mvt": 0,
       "offset": 0.01,
-      "dur": 242.76
+      "dur": 242.76,
+      "size": 4856684
      }
     ],
     "Bass 2": [
@@ -377,7 +403,8 @@
       "voice": "Bass 2",
       "mvt": 0,
       "offset": 0.7,
-      "dur": 242.44
+      "dur": 242.44,
+      "size": 4849964
      }
     ]
    },
@@ -443,7 +470,8 @@
    "composer": "Jake Runestad · text by Humberto Ak'abal",
    "recording": {
     "id": "1mM__pE0M6CUuE3xVCmOawezu1kZrnPeR",
-    "dur": 1778.08
+    "dur": 1778.08,
+    "size": 52720015
    },
    "score": {
     "id": "12t5oaRgjOLGHa9dtUp5kRj37kmg2b-66"
@@ -466,63 +494,72 @@
       "voice": "Soprano 1",
       "mvt": 0,
       "offset": 0,
-      "dur": 215.54
+      "dur": 215.54,
+      "size": 5176968
      },
      {
       "id": "11L1_LPcOzYU04ALJtXK8oe_UK3zY7pmY",
       "voice": "Soprano 1",
       "mvt": 1,
       "offset": 0,
-      "dur": 93.68
+      "dur": 93.68,
+      "size": 2252299
      },
      {
       "id": "1GGp2RONCLGzm2P-5Z8hGD4_ptwJN1seq",
       "voice": "Soprano 1",
       "mvt": 2,
       "offset": 0,
-      "dur": 220.0
+      "dur": 220.0,
+      "size": 5284175
      },
      {
       "id": "1PXd8plqQmxXOYL2ZbSLwR7y0sPLY8PsN",
       "voice": "Soprano 1",
       "mvt": 3,
       "offset": 0,
-      "dur": 166.5
+      "dur": 166.5,
+      "size": 4000204
      },
      {
       "id": "1x4Dw5zvstd7mLOwyHB_mR7gPFUOATo-H",
       "voice": "Soprano 1",
       "mvt": 4,
       "offset": 0,
-      "dur": 217.03
+      "dur": 217.03,
+      "size": 5212704
      },
      {
       "id": "1ZwslFygq80ftnw7CkUDFSex1_kEEQsoG",
       "voice": "Soprano 1",
       "mvt": 5,
       "offset": 0,
-      "dur": 108.85
+      "dur": 108.85,
+      "size": 2616550
      },
      {
       "id": "1-q6ZqRFLQFzBXHM8CqfF_UtH6pz5u3jr",
       "voice": "Soprano 1",
       "mvt": 6,
       "offset": 0,
-      "dur": 278.0
+      "dur": 278.0,
+      "size": 6675979
      },
      {
       "id": "1QYF0lRFNp16zrtG-yrutcDrp4ed-PiU0",
       "voice": "Soprano 1",
       "mvt": 7,
       "offset": 0,
-      "dur": 190.62
+      "dur": 190.62,
+      "size": 4578869
      },
      {
       "id": "1X9_VCVQ6jQz3DFA2ZrSlXLcRSLDLWCcC",
       "voice": "Soprano 1",
       "mvt": 8,
       "offset": 0,
-      "dur": 175.41
+      "dur": 175.41,
+      "size": 4213990
      }
     ],
     "Soprano 2": [
@@ -531,63 +568,72 @@
       "voice": "Soprano 2",
       "mvt": 0,
       "offset": 0,
-      "dur": 215.54
+      "dur": 215.54,
+      "size": 5176968
      },
      {
       "id": "18Uo8IlcoQgSO1y2ntFRN_J9EWFlbCZ6N",
       "voice": "Soprano 2",
       "mvt": 1,
       "offset": 0,
-      "dur": 93.68
+      "dur": 93.68,
+      "size": 2252299
      },
      {
       "id": "1fflmQINagJmt_p8vrw-2S1ZoMZPGSW95",
       "voice": "Soprano 2",
       "mvt": 2,
       "offset": 0,
-      "dur": 221.49
+      "dur": 221.49,
+      "size": 5319910
      },
      {
       "id": "1OS5wo3GEBC28VWFOVF52JMrin7ddV3-K",
       "voice": "Soprano 2",
       "mvt": 3,
       "offset": 0,
-      "dur": 166.5
+      "dur": 166.5,
+      "size": 4000204
      },
      {
       "id": "1-Q_6jQ49MBQMtvZT6ZSBiSDSPr1mOsoR",
       "voice": "Soprano 2",
       "mvt": 4,
       "offset": 0,
-      "dur": 217.03
+      "dur": 217.03,
+      "size": 5212704
      },
      {
       "id": "1zlVzLPGATRlprfulG41_TmV5XjdDiNjM",
       "voice": "Soprano 2",
       "mvt": 5,
       "offset": 0,
-      "dur": 108.85
+      "dur": 108.85,
+      "size": 2616550
      },
      {
       "id": "1rUMcDGbPRs3Z5GRRl5nZ5X7N-4hnjEg4",
       "voice": "Soprano 2",
       "mvt": 6,
       "offset": 0,
-      "dur": 278.0
+      "dur": 278.0,
+      "size": 6675979
      },
      {
       "id": "1Tbe6SPmXJAFLvLWRFgIX0y73UzmGqQ45",
       "voice": "Soprano 2",
       "mvt": 7,
       "offset": 0,
-      "dur": 190.62
+      "dur": 190.62,
+      "size": 4578869
      },
      {
       "id": "178Pafbch-jOUbSOUyvjJO53dakn6seFu",
       "voice": "Soprano 2",
       "mvt": 8,
       "offset": 0,
-      "dur": 176.9
+      "dur": 176.9,
+      "size": 4249726
      }
     ],
     "Alto 1": [
@@ -596,63 +642,72 @@
       "voice": "Alto",
       "mvt": 0,
       "offset": 0,
-      "dur": 215.54
+      "dur": 215.54,
+      "size": 5176968
      },
      {
       "id": "1POt--ElpXYMgrb_73LdeJHbjBez0CnuF",
       "voice": "Alto",
       "mvt": 1,
       "offset": 0,
-      "dur": 95.16
+      "dur": 95.16,
+      "size": 2288034
      },
      {
       "id": "1CH9K3encSHZ9BB3plsWJ-kJ9ospl6wZy",
       "voice": "Alto",
       "mvt": 2,
       "offset": 0,
-      "dur": 220.0
+      "dur": 220.0,
+      "size": 5284175
      },
      {
       "id": "1olbdMQLW0VUw2exZ5u9rBp1MqkMNH6m0",
       "voice": "Alto",
       "mvt": 3,
       "offset": 0,
-      "dur": 166.5
+      "dur": 166.5,
+      "size": 4000204
      },
      {
       "id": "1wqojqSwTyXly9ksT5QIwllMz1QNwQh6i",
       "voice": "Alto 1",
       "mvt": 4,
       "offset": 0,
-      "dur": 217.03
+      "dur": 217.03,
+      "size": 5212704
      },
      {
       "id": "14fD2pCS8cgUMZ7lKAsloUxdLD00jEl3K",
       "voice": "Alto 1",
       "mvt": 5,
       "offset": 0,
-      "dur": 108.85
+      "dur": 108.85,
+      "size": 2616550
      },
      {
       "id": "1figQLSkA_Q77U9S0lMk-MGaRSBcZnu8r",
       "voice": "Alto 1",
       "mvt": 6,
       "offset": 0,
-      "dur": 278.0
+      "dur": 278.0,
+      "size": 6675979
      },
      {
       "id": "1NYjApu2EOmUocY_6xnYv9DBIq2ZPSm3o",
       "voice": "Alto",
       "mvt": 7,
       "offset": 0,
-      "dur": 190.62
+      "dur": 190.62,
+      "size": 4578869
      },
      {
       "id": "1U9NnhfEW7L7ZPy1HhyYv2U43ZNW93jDM",
       "voice": "Alto 1",
       "mvt": 8,
       "offset": 0,
-      "dur": 175.41
+      "dur": 175.41,
+      "size": 4213990
      }
     ],
     "Alto 2": [
@@ -661,63 +716,72 @@
       "voice": "Alto",
       "mvt": 0,
       "offset": 0,
-      "dur": 215.54
+      "dur": 215.54,
+      "size": 5176968
      },
      {
       "id": "1POt--ElpXYMgrb_73LdeJHbjBez0CnuF",
       "voice": "Alto",
       "mvt": 1,
       "offset": 0,
-      "dur": 95.16
+      "dur": 95.16,
+      "size": 2288034
      },
      {
       "id": "1CH9K3encSHZ9BB3plsWJ-kJ9ospl6wZy",
       "voice": "Alto",
       "mvt": 2,
       "offset": 0,
-      "dur": 220.0
+      "dur": 220.0,
+      "size": 5284175
      },
      {
       "id": "1olbdMQLW0VUw2exZ5u9rBp1MqkMNH6m0",
       "voice": "Alto",
       "mvt": 3,
       "offset": 0,
-      "dur": 166.5
+      "dur": 166.5,
+      "size": 4000204
      },
      {
       "id": "1t7Fy2VGzhlBbWuaLqY2jWcRAACh20_W7",
       "voice": "Alto 2",
       "mvt": 4,
       "offset": 0,
-      "dur": 217.03
+      "dur": 217.03,
+      "size": 5212704
      },
      {
       "id": "1d9b_3w9bm9CleEOwIQSkHaH9TsVUm7sE",
       "voice": "Alto 2",
       "mvt": 5,
       "offset": 0,
-      "dur": 108.85
+      "dur": 108.85,
+      "size": 2616550
      },
      {
       "id": "1K0TMA3ZHkKqa13fZZdo5bA8FNkU_N_YH",
       "voice": "Alto 2",
       "mvt": 6,
       "offset": 0,
-      "dur": 278.0
+      "dur": 278.0,
+      "size": 6675979
      },
      {
       "id": "1NYjApu2EOmUocY_6xnYv9DBIq2ZPSm3o",
       "voice": "Alto",
       "mvt": 7,
       "offset": 0,
-      "dur": 190.62
+      "dur": 190.62,
+      "size": 4578869
      },
      {
       "id": "1AoSypmG1-Ssac3rjcOKc_bxu7oWJYHNS",
       "voice": "Alto 2",
       "mvt": 8,
       "offset": 0,
-      "dur": 176.9
+      "dur": 176.9,
+      "size": 4249726
      }
     ],
     "Tenor": [
@@ -726,63 +790,72 @@
       "voice": "Tenor",
       "mvt": 0,
       "offset": 0,
-      "dur": 215.54
+      "dur": 215.54,
+      "size": 5176968
      },
      {
       "id": "11o__nxF-914ca4_yzAWUKef4WVUJqPot",
       "voice": "Tenor",
       "mvt": 1,
       "offset": 0,
-      "dur": 93.68
+      "dur": 93.68,
+      "size": 2252299
      },
      {
       "id": "1lJS3eMNXStpPhremU2fkyVS8navg9j3o",
       "voice": "Tenor",
       "mvt": 2,
       "offset": 0,
-      "dur": 220.0
+      "dur": 220.0,
+      "size": 5284175
      },
      {
       "id": "1bbx_0PBqEmELLOl3h-viScc10Ud2QLsn",
       "voice": "Tenor",
       "mvt": 3,
       "offset": 0,
-      "dur": 166.5
+      "dur": 166.5,
+      "size": 4000204
      },
      {
       "id": "1IB8kzgylv4zHsBt8rTUYmzAEttfKkBTD",
       "voice": "Tenor",
       "mvt": 4,
       "offset": 0,
-      "dur": 217.03
+      "dur": 217.03,
+      "size": 5212704
      },
      {
       "id": "1Vx2dOij0UAE6ESWkAIgyKz9BdwDEahmR",
       "voice": "Tenor",
       "mvt": 5,
       "offset": 0,
-      "dur": 108.85
+      "dur": 108.85,
+      "size": 2616550
      },
      {
       "id": "1Q9jAqMkfk-YIutmH-enwQGo5iZBFS1o7",
       "voice": "Tenor",
       "mvt": 6,
       "offset": 0,
-      "dur": 278.0
+      "dur": 278.0,
+      "size": 6675979
      },
      {
       "id": "13zB5xAT33A7ZNX34f8M7pnYh5qlso_4v",
       "voice": "Tenor",
       "mvt": 7,
       "offset": 0,
-      "dur": 190.62
+      "dur": 190.62,
+      "size": 4578869
      },
      {
       "id": "1f7zDYJA_ItKQkU0aVc358JVO76XAVsT3",
       "voice": "Tenor",
       "mvt": 8,
       "offset": 0,
-      "dur": 176.9
+      "dur": 176.9,
+      "size": 4249726
      }
     ],
     "Bass 1": [
@@ -791,63 +864,72 @@
       "voice": "Baritone",
       "mvt": 0,
       "offset": 0,
-      "dur": 215.54
+      "dur": 215.54,
+      "size": 5176968
      },
      {
       "id": "1YWt-zsZvAf8bJshBmVbkRqLo9adkBs9q",
       "voice": "Baritone",
       "mvt": 1,
       "offset": 0,
-      "dur": 95.16
+      "dur": 95.16,
+      "size": 2288034
      },
      {
       "id": "1gsKtyZBXwGjNCFUTjb-jhN1WMJlXacZc",
       "voice": "Baritone",
       "mvt": 2,
       "offset": 0,
-      "dur": 220.0
+      "dur": 220.0,
+      "size": 5284175
      },
      {
       "id": "1RqTyka4vjVPENu-Z8bOIOmscGRXi3CtO",
       "voice": "Baritone",
       "mvt": 3,
       "offset": 0,
-      "dur": 166.5
+      "dur": 166.5,
+      "size": 4000204
      },
      {
       "id": "1a7vyLt55kKmpf5woz9Ez9iwVI67MJo3F",
       "voice": "Baritone",
       "mvt": 4,
       "offset": 0,
-      "dur": 217.03
+      "dur": 217.03,
+      "size": 5212704
      },
      {
       "id": "111mP-lr9mxNMRyCHVkfPEZMjRv28O4aD",
       "voice": "Bass",
       "mvt": 5,
       "offset": 0,
-      "dur": 108.85
+      "dur": 108.85,
+      "size": 2616550
      },
      {
       "id": "1A6cJ3LVvknnuChMI6hCBG64PTa3bA4D7",
       "voice": "Baritone",
       "mvt": 6,
       "offset": 0,
-      "dur": 278.0
+      "dur": 278.0,
+      "size": 6675979
      },
      {
       "id": "11lL7f2vxmtz8qwfLHiTS85SAJXjRYqut",
       "voice": "Baritone",
       "mvt": 7,
       "offset": 0,
-      "dur": 190.62
+      "dur": 190.62,
+      "size": 4578869
      },
      {
       "id": "1Eh3oVsuYbJjwUGgvXq_8tBlapztNa5a4",
       "voice": "Baritone",
       "mvt": 8,
       "offset": 0,
-      "dur": 176.9
+      "dur": 176.9,
+      "size": 4249726
      }
     ],
     "Bass 2": [
@@ -856,63 +938,72 @@
       "voice": "Bass",
       "mvt": 0,
       "offset": 0,
-      "dur": 215.54
+      "dur": 215.54,
+      "size": 5176968
      },
      {
       "id": "1rC4I3QtKbJ_npp_nSbYuCscUKlruvE6y",
       "voice": "Bass",
       "mvt": 1,
       "offset": 0,
-      "dur": 93.68
+      "dur": 93.68,
+      "size": 2252299
      },
      {
       "id": "1mIi7nCGW2lz_wTGOa5Cpkm6OH0ilomJX",
       "voice": "Bass",
       "mvt": 2,
       "offset": 0,
-      "dur": 221.49
+      "dur": 221.49,
+      "size": 5319910
      },
      {
       "id": "1JTLhKeyj17xh07ZysKM2x4A7G8izepry",
       "voice": "Bass",
       "mvt": 3,
       "offset": 0,
-      "dur": 166.5
+      "dur": 166.5,
+      "size": 4000204
      },
      {
       "id": "1Q7ZM3m7bOWs_8WhxNK4PB-7ct0jXbf17",
       "voice": "Bass",
       "mvt": 4,
       "offset": 0,
-      "dur": 217.03
+      "dur": 217.03,
+      "size": 5212704
      },
      {
       "id": "111mP-lr9mxNMRyCHVkfPEZMjRv28O4aD",
       "voice": "Bass",
       "mvt": 5,
       "offset": 0,
-      "dur": 108.85
+      "dur": 108.85,
+      "size": 2616550
      },
      {
       "id": "1y5kIAgJ5__Hm7fr8FrlJqWf5YkvJO3JK",
       "voice": "Bass",
       "mvt": 6,
       "offset": 0,
-      "dur": 278.0
+      "dur": 278.0,
+      "size": 6675979
      },
      {
       "id": "1qfV0daihEWzjQ-OzS1Rjx31l1b8Ra5RH",
       "voice": "Bass",
       "mvt": 7,
       "offset": 0,
-      "dur": 190.62
+      "dur": 190.62,
+      "size": 4578869
      },
      {
       "id": "1tyA8g5bSegZVqMHIp92lgFA7uoEahl9m",
       "voice": "Bass",
       "mvt": 8,
       "offset": 0,
-      "dur": 176.9
+      "dur": 176.9,
+      "size": 4249726
      }
     ],
     "Balanced Voices": [
@@ -921,63 +1012,72 @@
       "voice": "Balanced Parts",
       "mvt": 0,
       "offset": 0,
-      "dur": 215.54
+      "dur": 215.54,
+      "size": 5176968
      },
      {
       "id": "1blOu6b7MDbXvuj0synDWyIvzG0AJV1ua",
       "voice": "Balanced Parts",
       "mvt": 1,
       "offset": 0,
-      "dur": 95.16
+      "dur": 95.16,
+      "size": 2288034
      },
      {
       "id": "1znCVOV83q-ZUXKxQq8PLJyoPKGWDbR23",
       "voice": "Balanced Parts",
       "mvt": 2,
       "offset": 0,
-      "dur": 221.49
+      "dur": 221.49,
+      "size": 5319910
      },
      {
       "id": "1P8z6UE6ySgKn_AutuaVgSWpC0U6s9G3J",
       "voice": "Balanced Parts",
       "mvt": 3,
       "offset": 0,
-      "dur": 166.5
+      "dur": 166.5,
+      "size": 4000204
      },
      {
       "id": "1eMgNUuEG59HPxsNgIcBil0urHTP4f9B4",
       "voice": "Balanced Parts",
       "mvt": 4,
       "offset": 0,
-      "dur": 217.03
+      "dur": 217.03,
+      "size": 5212704
      },
      {
       "id": "14uopuFLnmpLw_VSbn9oDQdjD_aRIgCmS",
       "voice": "Balanced Parts",
       "mvt": 5,
       "offset": 0,
-      "dur": 108.85
+      "dur": 108.85,
+      "size": 2616550
      },
      {
       "id": "1fAHyNCJDx6VuyqjuKz_4XcwW7NPGcv9O",
       "voice": "Balanced Parts",
       "mvt": 6,
       "offset": 0,
-      "dur": 279.43
+      "dur": 279.43,
+      "size": 6710461
      },
      {
       "id": "1a7nwcTticeM6gk6wRGcHLyypl5wSkC8u",
       "voice": "Balanced Parts",
       "mvt": 7,
       "offset": 0,
-      "dur": 190.62
+      "dur": 190.62,
+      "size": 4578869
      },
      {
       "id": "19FmkAlqDRqgdhj947iZ8ddQ9VA75vqEF",
       "voice": "Balanced Parts",
       "mvt": 8,
       "offset": 0,
-      "dur": 176.9
+      "dur": 176.9,
+      "size": 4249726
      }
     ]
    },
@@ -1097,7 +1197,8 @@
    "composer": "Jackson C. Thomas · text by Sara Teasdale",
    "recording": {
     "id": "1zo9Pq997ABsMQWqCrJB211vDCgpdJXMA",
-    "dur": 281.39
+    "dur": 281.39,
+    "size": 8237252
    },
    "score": {
     "id": "1NhIoiXDF4JlkEGUz9mi6l2mGfS3nmcZG"
@@ -1110,7 +1211,8 @@
       "voice": "Soprano",
       "mvt": 0,
       "offset": 0,
-      "dur": 263.39
+      "dur": 263.39,
+      "size": 8428618
      }
     ],
     "Soprano 2": [
@@ -1119,7 +1221,8 @@
       "voice": "Soprano",
       "mvt": 0,
       "offset": 0,
-      "dur": 263.39
+      "dur": 263.39,
+      "size": 8428618
      }
     ],
     "Alto 1": [
@@ -1128,7 +1231,8 @@
       "voice": "Alto",
       "mvt": 0,
       "offset": 0,
-      "dur": 263.39
+      "dur": 263.39,
+      "size": 8428618
      }
     ],
     "Alto 2": [
@@ -1137,7 +1241,8 @@
       "voice": "Alto",
       "mvt": 0,
       "offset": 0,
-      "dur": 263.39
+      "dur": 263.39,
+      "size": 8428618
      }
     ],
     "Tenor": [
@@ -1146,7 +1251,8 @@
       "voice": "Tenor",
       "mvt": 0,
       "offset": 0,
-      "dur": 263.39
+      "dur": 263.39,
+      "size": 8428618
      }
     ],
     "Bass 1": [
@@ -1155,7 +1261,8 @@
       "voice": "Bass",
       "mvt": 0,
       "offset": 0,
-      "dur": 263.39
+      "dur": 263.39,
+      "size": 8428618
      }
     ],
     "Bass 2": [
@@ -1164,7 +1271,8 @@
       "voice": "Bass",
       "mvt": 0,
       "offset": 0,
-      "dur": 263.39
+      "dur": 263.39,
+      "size": 8428618
      }
     ]
    },
