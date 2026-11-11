@@ -105,7 +105,7 @@ select{font:inherit;padding:8px;border-radius:10px;border:2px solid var(--line);
   function modes(pc) {
     const out = [{ m: "part", label: part && pc.tracks[part] ? (part === "Tenor" && pc.tracks["Tenor 2"] ? "Tenor 1" : part) : "Practice track" }];
     if (part === "Tenor" && pc.tracks["Tenor 2"]) out.push({ m: "part2", label: "Tenor 2" });
-    if (pc.recording) out.push({ m: "rec", label: "Full choir" });
+    if (pc.recording) out.unshift({ m: "rec", label: "Full choir" });
     return out;
   }
   // Where section `s` starts on track mode `m`: {f: file index, t: seconds} or null.
