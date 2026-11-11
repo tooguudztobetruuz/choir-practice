@@ -98,8 +98,9 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
   padding:max(8px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 6px max(16px,env(safe-area-inset-left))}
 .bar .in{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:8px}
 .bar .what{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0 4px}
-.bar .what b,.bar .what>span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bar .what>span{color:var(--muted);font-size:.85rem;font-variant-numeric:tabular-nums}
+.bar .what b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .what>span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-size:.85rem;font-variant-numeric:tabular-nums}
+.bar .secline{max-width:600px;margin:6px auto 0;font-weight:700;color:var(--c);font-size:.95rem;line-height:1.3;min-height:1.3em}
 .bar .play{width:52px;height:52px;font-size:1.2rem;flex:none}
 .bar .sk{width:44px;height:44px;border-radius:999px;border:2px solid var(--line);background:var(--surface);flex:none;font-size:1rem}
 .bar .sw{flex:none;max-width:34%;min-height:44px;border-radius:999px;border:2px solid var(--o);background:var(--os);color:var(--o);font-weight:700;font-size:.85rem;padding:0 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -133,15 +134,19 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
   const piece = () => P.pieces[pi];
 
   /* ----- tracks: a list of files (one, or one per movement) ----- */
+  // A second line for the same part in a piece (e.g. Tenor 1 and Tenor 2 both in the Tenor folder).
+  const altOf = pc => (pc.alt && part && pc.alt[part] && pc.alt[part][0]) || null;
+  const mainVoice = pc => (pc.mainVoice && pc.mainVoice[part]) || part;
   function partTrackName(pc) { return pc.tracks[part] ? part : (pc.tracks["Balanced Voices"] ? "Balanced Voices" : Object.keys(pc.tracks)[0]); }
   function track(pc, m) {
     if (m === "rec") return pc.recording ? [{ id: pc.recording.id, mvt: 0, offset: 0 }] : [];
-    if (m === "part2") return pc.tracks["Tenor 2"] || [];
+    if (m === "part2") { const a = altOf(pc); return a ? a.files : []; }
     return pc.tracks[partTrackName(pc)] || [];
   }
   function modes(pc) {
-    const out = [{ m: "part", label: part && pc.tracks[part] ? (part === "Tenor" && pc.tracks["Tenor 2"] ? "Tenor 1" : part) : "Practice track" }];
-    if (part === "Tenor" && pc.tracks["Tenor 2"]) out.push({ m: "part2", label: "Tenor 2" });
+    const a = altOf(pc);
+    const out = [{ m: "part", label: part && pc.tracks[part] ? (a ? mainVoice(pc) : part) : "Practice track" }];
+    if (a) out.push({ m: "part2", label: a.label });
     if (pc.recording) out.unshift({ m: "rec", label: "Full choir" });
     return out;
   }
@@ -222,7 +227,7 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
     const r = $("#scrub"); if (r && audio.duration && document.activeElement !== r) { r.max = audio.duration; r.value = t; }
     document.querySelectorAll(".sec[data-i]").forEach(b => b.classList.toggle("on", !!s && pc.sections[+b.dataset.i] === s));
     const pb = $("#pitch"); if (pb) { const ps = s && s.pitch ? s : null; pb.hidden = !ps; if (ps) { pb.textContent = "♪ " + ps.pitch; pb.dataset.p = ps.pitch; } }
-    const bs = $("#barsec"); if (bs) bs.textContent = (s ? s.name : modeLabel());
+    const bs = $("#barsec"); if (bs) bs.textContent = s ? s.name : "";
     const bc = $("#barclk"); if (bc) bc.textContent = fmt(t);
     const ms = $("#mscrub"); if (ms && audio.duration && document.activeElement !== ms) { ms.max = audio.duration; ms.value = t; }
   }
@@ -260,7 +265,7 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
     const out = [];
     P.pieces.forEach(pc => {
       if (part && pc.tracks[part]) pc.tracks[part].forEach(f => out.push(f));
-      if (part === "Tenor" && pc.tracks["Tenor 2"]) pc.tracks["Tenor 2"].forEach(f => out.push(f));
+      const a = altOf(pc); if (a) a.files.forEach(f => out.push(f));
       if (pc.recording) out.push(pc.recording);
     });
     const seen = new Set();
@@ -357,9 +362,9 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
   function renderPlayer() {
     const el = $("#open"); if (!el || pi < 0) return;
     const pc = piece(), files = track(pc, mode);
-    const t2 = part === "Tenor" && pc.tracks["Tenor 2"] && mode !== "rec";
+    const alt = altOf(pc), t2 = alt && mode !== "rec";
     el.innerHTML = `
-      ${t2 ? `<div class="row"><button class="chip" data-mode="part" aria-pressed="${mode === "part"}">Tenor 1</button><button class="chip" data-mode="part2" aria-pressed="${mode === "part2"}">Tenor 2</button></div>` : ""}
+      ${t2 ? `<div class="row"><button class="chip" data-mode="part" aria-pressed="${mode === "part"}">${esc(mainVoice(pc))}</button><button class="chip" data-mode="part2" aria-pressed="${mode === "part2"}">${esc(alt.label)}</button></div>` : ""}
       ${pc.movements && files.length > 1 ? `<label class="row mv">Movement <select id="mvt" aria-label="Movement">${files.map((f, i) => `<option value="${i}" ${i === fi ? "selected" : ""}>${esc(pc.movements[f.mvt] || "Movement " + (i + 1))}</option>`).join("")}</select></label>` : ""}
       <div class="secs" id="secs"></div>
       <div class="tools">
@@ -392,16 +397,17 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
         <button class="sk" data-act="prev" aria-label="Restart, or tap twice for the previous piece">⏮</button>
         <button class="play" data-act="play" aria-label="${audio.paused ? "Play" : "Pause"}">${audio.paused ? "▶" : "❚❚"}</button>
         <button class="sk" data-act="next" aria-label="Next piece" ${pi >= P.pieces.length - 1 ? "disabled" : ""}>⏭</button>
-        <button class="what" data-act="goto" aria-label="Show ${esc(piece().name)}"><b>${esc(piece().name)}</b><span><span id="barclk">${fmt(audio.currentTime)}</span> · <span id="barsec">${esc(modeLabel())}</span></span></button>
+        <button class="what" data-act="goto" aria-label="Show ${esc(piece().name)}"><b>${esc(piece().name)}</b><span>${esc(modeLabel())} · <span id="barclk">${fmt(audio.currentTime)}</span></span></button>
         ${o ? `<button class="sw" data-mode="${o.m}" aria-label="Switch to ${esc(o.label)}">⇄ ${esc(o.label)}</button>` : ""}
       </div>
+      <p class="secline" id="barsec"></p>
       <div class="seek"><input type="range" id="mscrub" min="0" max="${audio.duration || 1}" step="0.5" value="${audio.currentTime || 0}" aria-label="Position in the track"></div>`;
   }
   // Which kind of track to use for piece pc, given what the singer has chosen.
   function modeFor(pc, want) {
     const has = m => track(pc, m).length;
     if (want === "rec") return pc.recording ? "rec" : "part";
-    if (want === "part2" && pc.tracks["Tenor 2"]) return "part2";
+    if (want === "part2" && altOf(pc)) return "part2";
     return part && pc.tracks[part] ? "part" : (pc.recording ? "rec" : "part");
   }
   // Open piece n. Keeps listening to the same kind of track (your part or the full choir).
@@ -474,13 +480,102 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
   });
 
   if (canSave) { try { navigator.serviceWorker.register("sw.js").catch(() => {}); } catch (e) {} }
-  fetch("program.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
+  /* ----- read the season from Google Drive -----
+     Choir Practice (shared folder) / <season> / Sheet Music, Recordings / Full Recordings, Practice Tracks / <part>
+     plus <season>/choir-practice.json from Choir Admin (piece order, sections, movement names, offsets). */
+  const FOLDER = "application/vnd.google-apps.folder";
+  const LIST = API.replace(/\/$/, "");
+  async function ls(folder) {
+    const out = []; let tok = "";
+    do {
+      const q = encodeURIComponent(`'${folder}' in parents and trashed = false`);
+      const f = encodeURIComponent("nextPageToken,files(id,name,mimeType,size,modifiedTime,createdTime)");
+      const r = await fetch(`${LIST}?q=${q}&fields=${f}&pageSize=1000&key=${encodeURIComponent(KEY)}${tok ? "&pageToken=" + tok : ""}`);
+      if (!r.ok) throw new Error("list " + r.status);
+      const j = await r.json(); out.push(...j.files); tok = j.nextPageToken || "";
+    } while (tok);
+    return out;
+  }
+  const norm = s => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+  const isDir = f => f.mimeType === FOLDER;
+  const named = (list, re) => list.find(f => isDir(f) && re.test(f.name.trim()));
+  // "Footprints Mvt 3 Song - Practice Track - Alto.mp3" -> piece "Footprints", movement 2 (0-based), voice "Alto"
+  function parseName(name) {
+    const base = name.replace(/\.[a-z0-9]+$/i, ""), bits = base.split(" - ");
+    let head = bits[0];
+    const m = head.match(/^(.*?)\s+Mvt\.?\s*(\d+)\b/i);
+    return { piece: m ? m[1] : head, mvt: m ? +m[2] - 1 : 0, voice: bits.length > 2 ? bits[bits.length - 1] : "" };
+  }
+  const VOICE_ORDER = ["soprano 1", "soprano 2", "soprano", "alto 1", "alto 2", "alto", "tenor 1", "tenor", "tenor 2", "baritone", "bass 1", "bass", "bass 2"];
+  const voiceRank = v => { const i = VOICE_ORDER.indexOf(String(v).toLowerCase()); return i < 0 ? 99 : i; };
+  async function readSeason() {
+    if (!window.CHOIR_ROOT) throw new Error("reading seasons from Drive is switched off");
+    const seasons = (await ls(window.CHOIR_ROOT)).filter(isDir);
+    if (!seasons.length) throw new Error("no seasons");
+    const found = await Promise.all(seasons.map(async s => { const kids = await ls(s.id); return { s, kids, j: kids.find(f => f.name === "choir-practice.json") }; }));
+    found.sort((a, b) => ((b.j && b.j.modifiedTime) || "").localeCompare((a.j && a.j.modifiedTime) || "") || (b.s.createdTime || "").localeCompare(a.s.createdTime || ""));
+    const { s, kids, j } = found[0];
+    const meta = j ? await fetch(src(j.id)).then(r => r.json()) : { pieces: [] };
+    const sheet = named(kids, /^sheet music$/i), recs = named(kids, /^recordings$/i);
+    const recKids = recs ? await ls(recs.id) : [];
+    const full = named(recKids, /^full recordings?$/i), prac = named(recKids, /^practice tracks?$/i);
+    const [scores, fulls, partDirs] = await Promise.all([sheet ? ls(sheet.id) : [], full ? ls(full.id) : [], prac ? ls(prac.id) : []]);
+    const parts = partDirs.filter(isDir);
+    const partFiles = await Promise.all(parts.map(p => ls(p.id)));
+    return buildProgram(meta, s, scores, fulls, parts, partFiles);
+  }
+  function buildProgram(meta, season, scores, fulls, parts, partFiles) {
+    const offs = meta.offsets || {}, durs = meta.durations || {};
+    const pieces = [], byKey = {};
+    const get = name => { const k = norm(name); if (!byKey[k]) { byKey[k] = { name, composer: "", movements: null, sections: [], tracks: {}, alt: {}, mainVoice: {}, recording: null, score: null }; pieces.push(byKey[k]); } return byKey[k]; };
+    (meta.pieces || []).forEach(m => Object.assign(get(m.name), { composer: m.composer || "", movements: m.movements || null, sections: m.sections || [] }));
+    const file = f => ({ id: f.id, mvt: parseName(f.name).mvt, offset: offs[f.id] || 0, dur: durs[f.id], size: +f.size || 0 });
+    fulls.filter(f => !isDir(f) && /\.(mp3|m4a|wav|aac|ogg)$/i.test(f.name)).forEach(f => { const pc = get(parseName(f.name).piece); if (!pc.recording) pc.recording = file(f); });
+    scores.filter(f => /\.pdf$/i.test(f.name)).forEach(f => { const pc = get(parseName(f.name).piece); if (!pc.score) pc.score = { id: f.id }; });
+    parts.forEach((dir, k) => {
+      const groups = {};
+      partFiles[k].filter(f => !isDir(f) && /\.(mp3|m4a|wav|aac|ogg)$/i.test(f.name)).forEach(f => {
+        const n = parseName(f.name), pc = get(n.piece);
+        ((groups[norm(pc.name)] = groups[norm(pc.name)] || { pc, voices: {} }).voices[n.voice] = groups[norm(pc.name)].voices[n.voice] || []).push(file(f));
+      });
+      Object.values(groups).forEach(({ pc, voices }) => {
+        // The part's own line first (same name as the folder, else the "1" line, else the first);
+        // any other line in the folder (Tenor 2 beside Tenor 1) becomes a second choice.
+        const names = Object.keys(voices).sort((a, b) => voiceRank(a) - voiceRank(b));
+        const main = names.find(v => norm(v) === norm(dir.name)) || names.find(v => /\b1$/.test(v)) || names[0];
+        const sortF = l => l.sort((a, b) => a.mvt - b.mvt);
+        pc.tracks[dir.name] = sortF(voices[main]);
+        const rest = names.filter(v => v !== main);
+        if (rest.length) { pc.mainVoice[dir.name] = main; pc.alt[dir.name] = rest.map(v => ({ label: v, files: sortF(voices[v]) })); }
+      });
+    });
+    const order = meta.pieces ? meta.pieces.map(m => norm(m.name)) : [];
+    pieces.sort((a, b) => { const i = order.indexOf(norm(a.name)), k = order.indexOf(norm(b.name)); return (i < 0 ? 999 : i) - (k < 0 ? 999 : k); });
+    const partNames = parts.map(p => p.name).filter(n => !/balanced/i.test(n)).sort((a, b) => voiceRank(a) - voiceRank(b));
+    return { org: meta.org || "", title: meta.title || season.name, sub: meta.sub || "", parts: partNames,
+             pieces: pieces.filter(pc => pc.recording || Object.keys(pc.tracks).length), season: season.id };
+  }
+  function start(d) {
     P = d; document.title = P.title || "Choir Practice";
     if (part && !P.parts.includes(part)) part = null;
     mode = "rec";   // always open on the full choir
     render();
     refreshSaved();
-  }).catch(() => { $("#app").innerHTML = `<p class="msg">The program didn't load. Check your internet connection and reload the page.</p>`; });
+  }
+  (async () => {
+    try {
+      const d = await readSeason();
+      store.set("ncc-program", JSON.stringify(d));
+      start(d);
+    } catch (e) {
+      console.warn("Couldn't read the season from Drive:", e);
+      // Drive unreachable: use the copy from the last visit, else the built-in program.
+      const cached = store.get("ncc-program");
+      if (cached) { try { start(JSON.parse(cached)); return; } catch (x) {} }
+      fetch("program.json", { cache: "no-cache" }).then(r => r.json()).then(start)
+        .catch(() => { $("#app").innerHTML = `<p class="msg">The program didn't load. Check your internet connection and reload the page.</p>`; });
+    }
+  })();
 })();
 </script>
 </body>

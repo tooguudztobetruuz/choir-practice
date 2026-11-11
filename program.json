@@ -106,6 +106,8 @@
      }
     ]
    },
+   "alt": {},
+   "mainVoice": {},
    "sections": [
     {
      "name": "m. 1 · “Time, you can spend it”",
@@ -232,16 +234,6 @@
       "size": 2770604
      }
     ],
-    "Tenor 2": [
-     {
-      "id": "1lcw9Mt0VTGBqBx_13U5G1dZHbCZZ_iUQ",
-      "voice": "Tenor 2",
-      "mvt": 0,
-      "offset": 0,
-      "dur": 138.48,
-      "size": 2770604
-     }
-    ],
     "Bass 1": [
      {
       "id": "1ECRgMfbHjqVvqoKQOdE9bmVDbEvfwRhi",
@@ -272,6 +264,26 @@
       "size": 3857588
      }
     ]
+   },
+   "alt": {
+    "Tenor": [
+     {
+      "label": "Tenor 2",
+      "files": [
+       {
+        "id": "1lcw9Mt0VTGBqBx_13U5G1dZHbCZZ_iUQ",
+        "voice": "Tenor 2",
+        "mvt": 0,
+        "offset": 0,
+        "dur": 138.48,
+        "size": 2770604
+       }
+      ]
+     }
+    ]
+   },
+   "mainVoice": {
+    "Tenor": "Tenor 1"
    },
    "sections": [
     {
@@ -408,6 +420,8 @@
      }
     ]
    },
+   "alt": {},
+   "mainVoice": {},
    "sections": [
     {
      "name": "A · Intro",
@@ -1081,6 +1095,8 @@
      }
     ]
    },
+   "alt": {},
+   "mainVoice": {},
    "sections": [
     {
      "name": "I. A Sign · m. 1",
@@ -1276,6 +1292,8 @@
      }
     ]
    },
+   "alt": {},
+   "mainVoice": {},
    "sections": [
     {
      "name": "m. 1 · Intro",
