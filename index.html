@@ -339,7 +339,7 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
       </section>
       <ol class="pl" id="pl" aria-label="Pieces"></ol>
       ${canSave ? `<section class="card" id="offline" aria-label="Save for offline"></section>` : ""}`;
-    renderList(); renderOffline();
+    renderList(); renderOffline(); renderBar();
   }
   function renderList() {
     const el = $("#pl"); if (!el) return;
@@ -390,7 +390,20 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
   function otherMode() { const ms = modes(piece()); if (ms.length < 2) return null; return mode === "rec" ? (ms.find(x => x.m === "part") || ms[1]) : ms.find(x => x.m === "rec") || null; }
   function renderBar() {
     const b = $("#bar");
-    if (!audio.dataset.id || pi < 0) { b.hidden = true; return; }
+    if (!P) { b.hidden = true; return; }
+    if (pi < 0) {
+      // Nothing chosen yet: the bar still sits at the top; ▶ starts the first piece.
+      b.hidden = false; b.className = "bar " + (mode === "rec" ? "c-rec" : "c-part");
+      b.innerHTML = `<div class="in">
+          <button class="sk" disabled aria-label="Previous">⏮</button>
+          <button class="play" data-act="first" aria-label="Play ${esc(P.pieces[0] ? P.pieces[0].name : "")}">▶</button>
+          <button class="sk" disabled aria-label="Next piece">⏭</button>
+          <span class="what"><b>Pick a piece</b><span>${esc(mode === "rec" ? "Full choir" : (part || ""))}</span></span>
+        </div>
+        <p class="secline" id="barsec"></p>
+        <div class="seek"><input type="range" id="mscrub" min="0" max="1" value="0" disabled aria-label="Position in the track"></div>`;
+      return;
+    }
     const o = otherMode();
     b.hidden = false; b.className = "bar " + (mode === "rec" ? "c-rec" : "c-part");
     b.innerHTML = `<div class="in">
@@ -456,6 +469,7 @@ a.tool{display:flex;align-items:center;justify-content:center;text-decoration:no
     if (b.dataset.mode) { chooseMode(b.dataset.mode); return; }
     if (b.dataset.i != null) { jump(piece().sections[+b.dataset.i]); return; }
     switch (b.dataset.act) {
+      case "first": openPiece(0, true); break;
       case "prev": prevPress(); break;
       case "next": nextPress(); break;
       case "goto": { const o = $("#open"); if (o) o.closest("li").scrollIntoView({ behavior: "smooth", block: "start" }); break; }
