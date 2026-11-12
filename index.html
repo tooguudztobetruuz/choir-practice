@@ -170,6 +170,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   const AUDIO = "ncc-audio-v1", audioKey = id => "https://ncc-audio.local/" + id;
   const canSave = "serviceWorker" in navigator && "caches" in window;
   const BACK = 5;   // seconds the Back button jumps: about two bars, enough to catch the start of a phrase
+  const LEAD = 1.5; // section jumps and repeats start this much early, so an entrance right on the mark isn't clipped
   const ICON = {
     dl: `<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto"><path d="M12 3.5v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>`,
     back: `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5a7.5 7.5 0 1 1-7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14.5 2 12 4.5 14.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="12" y="15.6" text-anchor="middle" font-size="9" font-weight="500" fill="currentColor" font-family="system-ui,sans-serif">${BACK}</text></svg>`,
@@ -229,10 +230,17 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     pc.sections.forEach(s => { const st = startOf(pc, s, m); if (st && st.f === f && st.t <= t + 0.05 && st.t >= bt) { best = s; bt = st.t; } });
     return best;
   }
+  let pin = null;   // {sec, f, m, t}: the section just jumped to, shown during its lead-in
+  function curSec(pc, t) {
+    if (pin && pin.m === mode && pin.f === fi && t >= pin.t - LEAD - 0.3 && t < pin.t) return pin.sec;
+    if (loop && loop.f === fi && t >= loop.a - 0.3 && t < loop.start) return loop.sec;
+    return sectionAt(pc, mode, fi, t);
+  }
+  const early = (s, st) => { pin = { sec: s, f: st.f, m: mode, t: st.t }; return Math.max(0, st.t - LEAD); };
   function sectionEnd(pc, m, s) {
     const a = startOf(pc, s, m); let end = null;
     pc.sections.forEach(x => { const st = startOf(pc, x, m); if (x !== s && st && st.f === a.f && st.t > a.t + 0.05 && (end == null || st.t < end)) end = st.t; });
-    return { f: a.f, a: a.t, b: end };
+    return { f: a.f, a: Math.max(0, a.t - LEAD), start: a.t, b: end };
   }
 
   /* ----- playback ----- */
@@ -248,7 +256,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   }
   function setMode(m) {
     if (m === mode) return;
-    const pc = piece(), was = loaded() && !audio.paused, cur = sectionAt(pc, mode, fi, nowT());
+    const pc = piece(), was = loaded() && !audio.paused, cur = curSec(pc, nowT());
     let target = cur && startOf(pc, cur, m);
     if (!target) {
       // nearest earlier section that has a start on both tracks
@@ -259,12 +267,12 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     }
     if (loop) { const ls = pc.sections.find(s => s === loop.sec); loop = ls && startOf(pc, ls, m) ? { sec: ls, ...sectionEnd(pc, m, ls) } : null; }
     audio.pause(); mode = m; audio.dataset.id = "";
-    load(target.f, target.t, was);
+    load(target.f, cur && startOf(pc, cur, m) ? early(cur, target) : target.t, was);
   }
   function jump(s) {
     const st = startOf(piece(), s, mode); if (!st) return;
     if (loop) loop = { sec: s, ...sectionEnd(piece(), mode, s) };
-    load(st.f, st.t, true);
+    load(st.f, early(s, st), true);
   }
   // Remember the open piece and the spot in it, so next visit ▶ carries on from there.
   let placeSaved = 0;
@@ -296,7 +304,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   });
   function tick() {
     if (!P || pi < 0) return;
-    const pc = piece(), t = nowT(), s = sectionAt(pc, mode, fi, t);
+    const pc = piece(), t = nowT(), s = curSec(pc, t);
     const c = $("#clk"); if (c) c.textContent = fmt(t);
     const d = $("#dur"); if (d) d.textContent = audio.duration ? "of " + fmt(audio.duration) : "";
     const n = $("#now"); if (n) n.textContent = s ? s.name : "";
@@ -550,12 +558,12 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   function choosePart(p) {
     part = p; store.set("ncc-part", part);
     if (pi >= 0) {
-      const was = loaded() && !audio.paused, s = sectionAt(piece(), mode, fi, nowT());
+      const was = loaded() && !audio.paused, s = curSec(piece(), nowT());
       audio.pause(); audio.dataset.id = ""; loop = null;
       mode = modeFor(piece(), "part");
       render();
       const st = s && startOf(piece(), s, mode);
-      load(st ? st.f : 0, st ? st.t : 0, was);
+      load(st ? st.f : 0, st ? early(s, st) : 0, was);
     } else { mode = "part"; render(); }
   }
   // ⏮: one tap restarts the track (or movement); a second tap within 1.5 s, or a tap in the first 3 s, goes to the previous piece.
@@ -588,7 +596,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     if (b.dataset.rep != null) {
       const s = piece().sections[+b.dataset.rep];
       if (loop && loop.sec === s) loop = null;
-      else { const st = startOf(piece(), s, mode); if (!st) return; loop = { sec: s, ...sectionEnd(piece(), mode, s) }; load(st.f, st.t, true); }
+      else { const st = startOf(piece(), s, mode); if (!st) return; loop = { sec: s, ...sectionEnd(piece(), mode, s) }; load(st.f, early(s, st), true); }
       renderBar(); renderSecs(); return;
     }
     switch (b.dataset.act) {
@@ -610,7 +618,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
       case "pitch": playNote(b.dataset.p); break;
       case "loop": {
         if (loop) loop = null;
-        else { const s = sectionAt(piece(), mode, fi, nowT()); if (s) loop = { sec: s, ...sectionEnd(piece(), mode, s) }; }
+        else { const s = curSec(piece(), nowT()); if (s) loop = { sec: s, ...sectionEnd(piece(), mode, s) }; }
         renderBar(); renderSecs(); break;
       }
     }
