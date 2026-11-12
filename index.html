@@ -16,21 +16,21 @@
 <style>
 :root{
   --bg:#f6f4ef; --surface:#ffffff; --ink:#1b1f1d; --muted:#555f5a; --line:#d8ddd9;
-  --accent:#1f5c45; --accent-soft:#e2efe8; --rec:#6a3f8f; --rec-soft:#efe7f6; --on:#ffffff; --warn:#8a3b12;
+  --accent:#1f5c45; --accent-soft:#e2efe8; --track:#efede8; --rec:#6a3f8f; --rec-soft:#efe7f6; --on:#ffffff; --warn:#8a3b12;
   --f-body:"Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-head:var(--f-body);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#111513; --surface:#1a201d; --ink:#eef2ef; --muted:#a7b3ad; --line:#2d3732;
-  --accent:#7fd3a8; --accent-soft:#1d3329; --rec:#c9a6ec; --rec-soft:#2b2236; --on:#111513; --warn:#f2a679 } }
+  --accent:#7fd3a8; --accent-soft:#1d3329; --track:#252c28; --rec:#c9a6ec; --rec-soft:#2b2236; --on:#111513; --warn:#f2a679 } }
 :root[data-theme="dark"]{
   --bg:#111513; --surface:#1a201d; --ink:#eef2ef; --muted:#a7b3ad; --line:#2d3732;
-  --accent:#7fd3a8; --accent-soft:#1d3329; --rec:#c9a6ec; --rec-soft:#2b2236; --on:#111513; --warn:#f2a679 }
+  --accent:#7fd3a8; --accent-soft:#1d3329; --track:#252c28; --rec:#c9a6ec; --rec-soft:#2b2236; --on:#111513; --warn:#f2a679 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.45 var(--f-body);
-  padding:0 max(16px,env(safe-area-inset-right)) 48px max(16px,env(safe-area-inset-left))}
+  padding:0 max(16px,env(safe-area-inset-right)) calc(var(--barh,200px) + 24px) max(16px,env(safe-area-inset-left))}
 main{max-width:600px;margin:16px auto 0;display:flex;flex-direction:column;gap:16px}
 h1{font:400 1.6rem/1.2 var(--f-head);letter-spacing:-.01em;margin:2px 0 0;text-wrap:balance}
 b,strong{font-weight:500}
@@ -73,17 +73,19 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
 /* Playlist */
 .pl{list-style:none;margin:0;padding:0}
 .pl>li{border-radius:0}
-.pl>li.cur{border-radius:16px}
+.pl>li.open{border-radius:16px}
 .pl>li+li{border-top:1px solid var(--line)}
-.pl>li.cur{background:var(--cs);border-top-color:transparent}
-.pl>li.cur+li{border-top-color:transparent}
-.pr{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:12px 8px;min-height:68px}
+.pl>li.open{background:var(--cs);border-top-color:transparent}
+.pl>li.open+li{border-top-color:transparent}
+.pr{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:12px 8px;min-height:68px}
 .pr .n{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;font-weight:400;color:var(--muted);font-size:.95rem}
 .pr .nm{min-width:0}
 .pr .nm b{display:block;font-size:1.05rem;line-height:1.25}
 .pr .nm span{display:block;color:var(--muted);font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pr .du{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.9rem}
-.pl li.cur .n{background:var(--c);color:var(--on)}
+.pr .eqw{color:var(--c);display:grid;place-items:center;min-width:16px}
+.pr .chev{color:var(--muted);transition:transform .2s}
+.pl li.open .chev{transform:rotate(180deg)}
 @media (prefers-reduced-motion: no-preference){ .eq rect{animation:eq 1.1s ease-in-out infinite;transform-origin:50% 100%;transform-box:fill-box} .eq rect:nth-child(2){animation-delay:-.4s} .eq rect:nth-child(3){animation-delay:-.7s} }
 @keyframes eq{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.45)}}
 .pl li.cur .nm b{color:var(--c)}
@@ -118,33 +120,30 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
 .offl .x{color:var(--muted);font-weight:400;text-decoration:underline}
 .offl progress{width:100%;height:6px}
 
-/* Pinned player */
-.bar{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);
-  margin:0 calc(-1 * max(16px,env(safe-area-inset-right))) 0 calc(-1 * max(16px,env(safe-area-inset-left)));
-  padding:max(8px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 8px max(16px,env(safe-area-inset-left))}
-.bar>div{max-width:600px;margin:0 auto}
-.bar .top{display:flex;align-items:flex-start;gap:10px}
-.bar .what{flex:1;min-width:0;text-align:left;background:none;border:0;padding:2px 0}
-.bar .what:disabled{opacity:1}
-.bar .what b{font-size:1rem;margin-right:6px}
-.bar .what b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bar .trk{color:var(--muted);font-weight:400}
-.bar .secl{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:400;color:var(--c);font-size:.92rem;line-height:1.3;margin-top:2px}
-.bar .sw{flex:none;max-width:42%;min-height:40px;border-radius:999px;border:1px solid var(--o);background:var(--os);color:var(--o);font-weight:500;font-size:.85rem;padding:0 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bar .seek{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-top:4px;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.bar .seek input{width:100%;height:28px;margin:0;accent-color:var(--c)}
-.bar .ctl{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:2px}
-.bar .ib{width:48px;height:48px;border-radius:999px;border:0;background:transparent;font-weight:400;font-size:1.2rem;flex:none;display:grid;place-items:center;padding:0;line-height:1}
-.bar .repl{display:flex;justify-content:center;margin-top:6px}
-.bar .reppill{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;background:var(--c);color:var(--on);font-size:.88rem;padding:6px 14px;min-height:38px;max-width:100%}
-.bar .reppill svg{width:18px;height:18px;flex:none}
-.bar .reppill span:first-of-type{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bar .reppill .x{opacity:.85}
-.bar .play{width:56px;height:56px;border-radius:999px;border:0;background:var(--c);color:var(--on);font-size:1.3rem;flex:none}
-@media (max-width:370px){.bar .ctl{gap:6px}}
-@media (prefers-reduced-motion: reduce){*{transition:none!important}}
-.bar .dl{flex:none;width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:400;font-size:.8rem;color:var(--muted)}
-.bar .dl.done{color:var(--accent);border-color:var(--accent)}
+/* Player, docked at the bottom */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -2px 10px rgba(0,0,0,.07);
+  padding:12px max(16px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.bar>div{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.bar .top{display:flex;align-items:center;gap:12px}
+.bar .play{width:56px;height:56px;border-radius:999px;border:0;background:var(--c);color:var(--on);flex:none;display:grid;place-items:center;padding:0}
+.bar .what{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.bar .pname{border:0;background:none;padding:0;text-align:left;font-size:1.15rem;font-weight:500;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.bar .secl{display:flex;align-items:center;gap:2px;min-width:0;color:var(--c);font-size:.92rem;min-height:24px}
+.bar .secl>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .loopic{flex:none;width:34px;height:28px;border:0;background:none;color:inherit;display:grid;place-items:center;padding:0}
+.bar .loopic svg{width:17px;height:17px}
+.bar .dl{flex:none;width:40px;height:40px;border-radius:999px;border:0;background:none;color:var(--muted);display:grid;place-items:center;font-size:.8rem;padding:0}
+.bar .dl.done{color:var(--accent)}
+.bar .seek input{display:block;width:100%;height:20px;margin:0;accent-color:var(--c)}
+.bar .times{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:-2px}
+.bar .bot{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.bar .tsw{display:flex;gap:2px;padding:2px;border-radius:999px;background:var(--track);min-width:0}
+.bar .tsw button{border:0;border-radius:999px;min-height:38px;padding:0 14px;font-size:.9rem;background:transparent;color:var(--muted);display:flex;align-items:center;gap:4px;white-space:nowrap}
+.bar .tsw button[aria-pressed="true"]{background:var(--surface);color:var(--c);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.bar .tsw button.ask{color:var(--accent);font-weight:500}
+.bar .skips{display:flex;flex:none}
+.bar .ib{width:44px;height:44px;border:0;background:none;display:grid;place-items:center;color:var(--ink);padding:0}
+@media (max-width:370px){.bar .tsw button{padding:0 10px}}
 .sheet .body{padding:4px 20px max(16px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px}
 .sheet progress{width:100%;height:8px}
 .sheet .acts{display:flex;flex-wrap:wrap;gap:8px}
@@ -175,6 +174,8 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     dl: `<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto"><path d="M12 3.5v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>`,
     back: `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5a7.5 7.5 0 1 1-7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14.5 2 12 4.5 14.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="12" y="15.6" text-anchor="middle" font-size="9" font-weight="500" fill="currentColor" font-family="system-ui,sans-serif">${BACK}</text></svg>`,
     fwd: `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5a7.5 7.5 0 1 0 7.5 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9.5 2 12 4.5 9.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="12" y="15.6" text-anchor="middle" font-size="9" font-weight="500" fill="currentColor" font-family="system-ui,sans-serif">${BACK}</text></svg>`,
+    play: `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.9l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5z"/></svg>`,
+    pause: `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>`,
     bars: `<svg class="eq" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><rect x="1.5" y="6" width="3" height="9" rx="1"/><rect x="6.5" y="2" width="3" height="13" rx="1"/><rect x="11.5" y="8" width="3" height="7" rx="1"/></svg>`,
     repeat: `<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></svg>`,
   };
@@ -187,6 +188,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   const speedNow = () => speeds[speedKey()] || 1;
   // Where ▶ starts when the open piece's track isn't loaded yet (0, or the spot remembered from last time).
   let resumeAt = 0;
+  let listOpen = false;   // pieces start closed; the open piece is always the one in the player
   const loaded = () => !!audio.dataset.id;
   const nowT = () => loaded() ? (audio.currentTime || 0) : resumeAt;
   // Length of the open piece's current file: from the player once loaded, else from the season data.
@@ -285,7 +287,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   ["play", "pause"].forEach(e => audio.addEventListener(e, () => { renderPlayButtons(); renderBar(); media(); savePlace(); }));
   window.addEventListener("pagehide", savePlace);
   // Update the ▶/❚❚ markers in the list without rebuilding it.
-  function renderPlayButtons() { document.querySelectorAll(".pr").forEach(b => { const i = +b.dataset.piece, cur = i === pi, playing = cur && !audio.paused; b.querySelector(".n").innerHTML = playing ? ICON.bars : i + 1; b.setAttribute("aria-label", (cur ? "" : "Open ") + P.pieces[i].name + (playing ? ", playing" : cur ? ", open" : "")); }); }
+  function renderPlayButtons() { document.querySelectorAll(".pr").forEach(b => { const i = +b.dataset.piece, cur = i === pi, playing = cur && !audio.paused; b.querySelector(".eqw").innerHTML = playing ? ICON.bars : ""; b.setAttribute("aria-label", P.pieces[i].name + (playing ? ", playing" : "")); }); }
   audio.addEventListener("loadedmetadata", tick);
   audio.addEventListener("error", () => {
     if (!audio.dataset.id) return;
@@ -301,7 +303,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     const r = $("#scrub"); if (r && audio.duration && document.activeElement !== r) { r.max = audio.duration; r.value = t; }
     document.querySelectorAll(".secr[data-row]").forEach(b => b.classList.toggle("on", !!s && pc.sections[+b.dataset.row] === s));
     const pb = $("#pitch"); if (pb) { const ps = s && s.pitch ? s : null; pb.hidden = !ps; if (ps) { pb.textContent = "♪ " + ps.pitch; pb.dataset.p = ps.pitch; } }
-    const bs = $("#barsec"); if (bs) bs.textContent = s ? " · " + s.name : "";
+    const bs = $("#barsec"); if (bs) { const [m, d] = s ? splitName(s.name) : ["", ""]; bs.textContent = s ? (d && m ? d + " · " + m : (d || m)) : ""; }
     const tc = $("#tcur"); if (tc) tc.textContent = fmt(t);
     const dur = durNow();
     const td = $("#tdur"); if (td) td.textContent = dur ? fmt(dur) : "–:––";
@@ -433,11 +435,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   function render() {
     const hasPart = !!part, partOn = mode !== "rec";
     $("#app").innerHTML = `<header><p class="eyebrow">${esc(P.org)}</p><h1>${esc(P.title)}</h1>${P.sub ? `<p class="sub">${esc(P.sub)}</p>` : ""}<button class="help" data-act="help">How to use</button></header>
-      ${hasPart ? "" : `<p class="hint">Choose your part, then tap ▶ or a section.</p>`}
-      <div class="switch" role="group" aria-label="What to play">
-        <button class="seg c-rec" data-act="seg-rec" aria-pressed="${!partOn}">Full choir</button>
-        <button class="seg c-part${hasPart ? "" : " ask"}" data-act="seg-part" aria-pressed="${partOn && hasPart}" aria-haspopup="dialog">${esc(hasPart ? part : "My part")} <svg class="car" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      </div>
+      ${hasPart ? "" : `<p class="hint">Choose your part below, then tap ▶ or a section.</p>`}
       <ol class="pl" id="pl" aria-label="Pieces"></ol>
       <dialog class="sheet guide" id="helpsheet" aria-label="How to use"><div class="ghd"><p class="hd">How to use</p><button class="gx" data-act="helpclose" aria-label="Close">✕</button></div>
         <div class="gbody"><a href="quickstart.jpg" target="_blank" rel="noopener"><img src="quickstart.jpg" alt="Quick start: choose your part, open a piece, press play or tap a section; repeat a section; skip back or ahead 5 seconds; switch between full choir and your part; save for offline." loading="lazy"></a>
@@ -458,13 +456,15 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
       const cur = i === pi, playing = cur && !audio.paused;
       const m = cur ? mode : (mode === "part2" ? "part" : mode);
       const d = totalDur(pc, m === "rec" && !pc.recording ? "part" : m);
-      return `<li class="${cur ? "cur" : ""}">
-        <button class="pr" data-piece="${i}" aria-current="${cur}" aria-label="${cur ? "" : "Open "}${esc(pc.name)}${playing ? ", playing" : cur ? ", open" : ""}">
-          <span class="n" aria-hidden="true">${playing ? ICON.bars : i + 1}</span>
+      const isOpen = cur && listOpen;
+      return `<li class="${cur ? "cur" : ""}${isOpen ? " open" : ""}">
+        <button class="pr" data-piece="${i}" aria-expanded="${isOpen}" aria-label="${esc(pc.name)}${playing ? ", playing" : ""}">
           <span class="nm"><b>${esc(pc.name)}</b><span>${esc(pc.composer || "")}</span></span>
+          <span class="eqw" aria-hidden="true">${playing ? ICON.bars : ""}</span>
           <span class="du">${d ? fmt(d) : ""}</span>
+          <svg class="chev" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        ${cur ? `<div class="open" id="open"></div>` : ""}</li>`;
+        ${isOpen ? `<div class="open" id="open"></div>` : ""}</li>`;
     }).join("");
     renderPlayer();
   }
@@ -477,7 +477,6 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
         ${pc.movements && files.length > 1 ? `<label class="chip">Movement <select id="mvt" aria-label="Movement">${files.map((f, i) => `<option value="${i}" ${i === fi ? "selected" : ""}>${esc(pc.movements[f.mvt] || "Movement " + (i + 1))}</option>`).join("")}</select></label>` : ""}
         <button class="chip" id="pitch" data-act="pitch" hidden></button>
         <label class="chip">Speed <select id="speed" aria-label="Speed">${[0.75, 0.85, 1, 1.1].map(v => `<option value="${v}" ${v === speedNow() ? "selected" : ""}>${v}×</option>`).join("")}</select></label>
-        ${pc.score ? `<a class="chip" target="_blank" rel="noopener" href="https://drive.google.com/file/d/${esc(pc.score.id)}/view">Score ↗</a>` : ""}
       </div>
       <div class="secs" id="secs"></div>
       ${err ? `<p class="msg">${esc(err)}</p>` : ""}`;
@@ -499,27 +498,31 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     const b = $("#bar");
     if (!P) { b.hidden = true; return; }
     b.hidden = false; b.className = "bar " + (mode === "rec" ? "c-rec" : "c-part");
-    const idle = pi < 0, o = idle ? null : otherMode(), playing = !idle && !audio.paused;
-    const label = idle ? (mode === "rec" ? "Full choir" : part || "") : modeLabel();
+    const idle = pi < 0, playing = !idle && !audio.paused, pc = idle ? null : piece();
+    const partLabel = part ? (mode === "part2" && pc && altOf(pc) ? altOf(pc).label : (pc && mode !== "rec" ? mainVoice(pc) : part)) : "";
     b.innerHTML = `<div>
         <div class="top">
-          <button class="what" data-act="goto" ${idle ? "disabled" : ""} aria-label="${idle ? "Nothing playing" : "Show " + esc(piece().name)}"><b>${esc(idle ? "Pick a piece" : piece().name)}</b>
-            <span class="secl"><span class="trk">${esc(label)}</span><span id="barsec"></span></span></button>
+          <button class="play" data-act="${idle ? "first" : "play"}" aria-label="${playing ? "Pause" : "Play"}">${playing ? ICON.pause : ICON.play}</button>
+          <div class="what">
+            <button class="pname" data-act="goto" ${idle ? "disabled" : ""} aria-label="${idle ? "Nothing playing" : "Show the sections of " + esc(pc.name)}">${esc(idle ? "Pick a piece" : pc.name)}</button>
+            <div class="secl"><span id="barsec"></span>${loop && !idle ? `<button class="loopic" data-act="loop" aria-label="Repeating this section. Tap to stop">${ICON.repeat}</button>` : ""}</div>
+          </div>
           ${canSave ? `<button class="dl" id="dl" data-act="dl" aria-label="Save for offline">${ICON.dl}</button>` : ""}
-          ${!part ? `<button class="sw" data-act="seg-part" aria-haspopup="dialog">Choose my part</button>`
-            : o ? `<button class="sw" data-mode="${o.m}" aria-label="Switch to ${esc(o.label)}">⇄ ${esc(o.label)}</button>` : ""}
         </div>
-        <div class="seek"><span id="tcur">${fmt(idle ? 0 : nowT())}</span>
+        <div class="seek">
           <input type="range" id="mscrub" min="0" max="${durNow() || 1}" step="0.5" value="${idle ? 0 : nowT()}" aria-label="Position in the track" ${idle || !loaded() ? "disabled" : ""}>
-          <span id="tdur">${idle || !loaded() || !audio.duration ? "–:––" : fmt(audio.duration)}</span></div>
-        <div class="ctl">
-          <button class="ib" data-act="prev" aria-label="Restart, or tap twice for the previous piece" ${idle ? "disabled" : ""}>⏮</button>
-          <button class="ib" data-act="back" aria-label="Back ${BACK} seconds" ${idle ? "disabled" : ""}>${ICON.back}</button>
-          <button class="play" data-act="${idle ? "first" : "play"}" aria-label="${playing ? "Pause" : "Play"}">${playing ? "❚❚" : "▶"}</button>
-          <button class="ib" data-act="fwd" aria-label="Forward ${BACK} seconds" ${idle ? "disabled" : ""}>${ICON.fwd}</button>
-          <button class="ib" data-act="next" aria-label="Next piece" ${idle || P.pieces.length < 2 ? "disabled" : ""}>⏭</button>
+          <div class="times"><span id="tcur">${fmt(idle ? 0 : nowT())}</span><span id="tdur">${idle || !durNow() ? "–:––" : fmt(durNow())}</span></div>
         </div>
-        ${loop && !idle ? `<div class="repl"><button class="reppill" data-act="loop" aria-label="Stop repeating ${esc(loop.sec.name)}">${ICON.repeat}<span>Repeating <b>${esc(splitName(loop.sec.name)[0] || loop.sec.name)}</b></span><span class="x" aria-hidden="true">✕</span></button></div>` : ""}
+        <div class="bot">
+          <div class="tsw" role="group" aria-label="What to play">
+            <button data-act="seg-rec" aria-pressed="${mode === "rec"}" ${pc && !pc.recording ? "disabled" : ""}>Full choir</button>
+            <button data-act="seg-part" class="${part ? "" : "ask"}" aria-pressed="${!!part && mode !== "rec"}" aria-haspopup="dialog">${esc(part ? partLabel : "Choose my part")}<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 5.5 7 9.5l4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+          <div class="skips">
+            <button class="ib" data-act="back" aria-label="Back ${BACK} seconds" ${idle ? "disabled" : ""}>${ICON.back}</button>
+            <button class="ib" data-act="fwd" aria-label="Forward ${BACK} seconds" ${idle ? "disabled" : ""}>${ICON.fwd}</button>
+          </div>
+        </div>
       </div>`;
     renderOffline(); tick();
   }
@@ -572,8 +575,10 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
     // Tapping a piece opens it (sections, and the player at the top) without playing; ▶ or a section plays.
     if (b.dataset.piece != null) {
       const n = +b.dataset.piece;
-      if (n !== pi) openPiece(n, false);
-      const o = $("#open"); if (o) o.closest("li").scrollIntoView({ behavior: "smooth", block: "nearest" });
+      if (n === pi && listOpen) { listOpen = false; renderList(); return; }
+      listOpen = true;
+      if (n !== pi) openPiece(n, false); else renderList();
+      const o = $("#open"); if (o) o.closest("li").scrollIntoView({ behavior: "smooth", block: "start" });
       return;
     }
     if (b.dataset.part != null && b.classList.contains("opt")) { const sh = $("#sheet"); if (sh && sh.open) sh.close(); choosePart(b.dataset.part); return; }
@@ -596,7 +601,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
       case "offclose": { const sh = $("#offsheet"); if (sh && sh.open) sh.close(); break; }
       case "prev": prevPress(); break;
       case "next": nextPress(); break;
-      case "goto": { const o = $("#open"); if (o) o.closest("li").scrollIntoView({ behavior: "smooth", block: "start" }); break; }
+      case "goto": { listOpen = true; renderList(); const o = $("#open"); if (o) o.closest("li").scrollIntoView({ behavior: "smooth", block: "start" }); break; }
       case "save": saveAll(); break;
       case "unsave": unsaveAll(); break;
       case "play": if (!loaded()) load(fi, resumeAt, true); else if (audio.paused) audio.play().catch(() => {}); else audio.pause(); break;
@@ -623,6 +628,7 @@ dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
   });
 
   if (canSave) { try { navigator.serviceWorker.register("sw.js").catch(() => {}); } catch (e) {} }
+  try { new ResizeObserver(() => document.documentElement.style.setProperty("--barh", $("#bar").offsetHeight + "px")).observe($("#bar")); } catch (e) {}
   /* ----- read the season from Google Drive -----
      Choir Practice (shared folder) / <season> / Sheet Music, Recordings / Full Recordings, Practice Tracks / <part>
      plus <season>/choir-practice.json from Choir Admin (piece order, sections, movement names, offsets). */
